@@ -725,7 +725,8 @@ namespace TKSG
                             {
                                 if(dr["CARDNO"].ToString().Trim().Equals(textBox1.Text.Trim()))
                                 {
-                                    MessageBox.Show(textBox1.Text);
+                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim());
+                                    //MessageBox.Show(textBox1.Text);
                                 }
                             }
                         }
@@ -741,6 +742,83 @@ namespace TKSG
                 {
 
                 }
+            }
+        }
+
+        public void ADDTOHREngFrm001(string ID,string CARDNO,string NAME)
+        {
+            SqlCommand cmd = new SqlCommand();
+
+            try
+            {
+            
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sqlConn.Close();
+                sqlConn.Open();
+                tran = sqlConn.BeginTransaction();
+
+                sbSql.Clear();
+
+                sbSql.AppendFormat(" INSERT INTO [TKGAFFAIRS].[dbo].[HREngFrm001]");
+                sbSql.AppendFormat(" ([TaskId],[HREngFrm001SN],[HREngFrm001Date],[HREngFrm001User],[HREngFrm001UsrDpt],[HREngFrm001Rank],[HREngFrm001OutDate],[HREngFrm001Location],[HREngFrm001Agent],[HREngFrm001Transp],[HREngFrm001LicPlate],[HREngFrm001Cause],[HREngFrm001DefOutTime],[HREngFrm001FF],[HREngFrm001OutTime],[HREngFrm001DefBakTime],[HREngFrm001CH],[HREngFrm001BakTime],[CRADNO],[MODIFYUSR],[MODIFYCASUE],[MODIFYTIME])");
+                sbSql.AppendFormat(" VALUES");
+                sbSql.AppendFormat(" (@TaskId,@HREngFrm001SN,@HREngFrm001Date,@HREngFrm001User,@HREngFrm001UsrDpt,@HREngFrm001Rank,@HREngFrm001OutDate,@HREngFrm001Location,@HREngFrm001Agent,@HREngFrm001Transp,@HREngFrm001LicPlate,@HREngFrm001Cause,@HREngFrm001DefOutTime,@HREngFrm001FF,@HREngFrm001OutTime,@HREngFrm001DefBakTime,@HREngFrm001CH,@HREngFrm001BakTime,@CRADNO,@MODIFYUSR,@MODIFYCASUE,@MODIFYTIME)");
+                sbSql.AppendFormat(" ");
+                sbSql.AppendFormat(" ");
+
+                cmd.Parameters.AddWithValue("@TaskId", Guid.NewGuid());
+                cmd.Parameters.AddWithValue("@HREngFrm001SN", "");
+                cmd.Parameters.AddWithValue("@HREngFrm001Date",DateTime.Now.ToString("yyyy/MM/dd") );
+                cmd.Parameters.AddWithValue("@HREngFrm001User", NAME+ ID);
+                cmd.Parameters.AddWithValue("@HREngFrm001UsrDpt","" );
+                cmd.Parameters.AddWithValue("@HREngFrm001Rank","" );
+                cmd.Parameters.AddWithValue("@HREngFrm001OutDate", DateTime.Now.ToString("yyyy/MM/dd"));
+                cmd.Parameters.AddWithValue("@HREngFrm001Location", "");
+                cmd.Parameters.AddWithValue("@HREngFrm001Agent", "");
+                cmd.Parameters.AddWithValue("@HREngFrm001Transp", "");
+                cmd.Parameters.AddWithValue("@HREngFrm001LicPlate","" );
+                cmd.Parameters.AddWithValue("@HREngFrm001Cause", "可自由外出人員" );
+                cmd.Parameters.AddWithValue("@HREngFrm001DefOutTime", DateTime.Now.ToString("HH:mm"));
+                cmd.Parameters.AddWithValue("@HREngFrm001FF", "否");
+                cmd.Parameters.AddWithValue("@HREngFrm001OutTime", DateTime.Now.ToString("HH:mm"));
+                cmd.Parameters.AddWithValue("@HREngFrm001DefBakTime", DateTime.Now.ToString("HH:mm"));
+                cmd.Parameters.AddWithValue("@HREngFrm001CH", "否");
+                cmd.Parameters.AddWithValue("@HREngFrm001BakTime", DateTime.Now.ToString("HH:mm"));
+                cmd.Parameters.AddWithValue("@CRADNO",CARDNO );
+                cmd.Parameters.AddWithValue("@MODIFYUSR", NAME + ID);
+                cmd.Parameters.AddWithValue("@MODIFYCASUE", "");
+                cmd.Parameters.AddWithValue("@MODIFYTIME", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+                cmd.Connection = sqlConn;
+                cmd.CommandTimeout = 60;
+                cmd.CommandText = sbSql.ToString();
+
+
+
+                cmd.Transaction = tran;
+                result = cmd.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+                    tran.Rollback();    //交易取消
+                }
+                else
+                {
+                    tran.Commit();      //執行交易  
+
+
+                }
+            }
+            catch
+            {
+
+            }
+
+            finally
+            {
+                sqlConn.Close();
             }
         }
 
