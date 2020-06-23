@@ -133,6 +133,8 @@ namespace TKSG
                 {
                     dataGridView1.DataSource = null;
 
+                    CHECKWHITELIST();
+
                 }
                 else
                 {
@@ -572,7 +574,7 @@ namespace TKSG
 
             try
             {
-                connectionString = connectionStringUOF;
+                connectionString = connectionStringTKGAFFAIRS;
                 sqlConn = new SqlConnection(connectionString);
 
                 sbSql.Clear();
@@ -680,7 +682,67 @@ namespace TKSG
             }
         }
 
+        public void CHECKWHITELIST()
+        {
+            if(!string.IsNullOrEmpty(textBox1.Text))
+            {
+                DataSet ds = new DataSet();
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                SqlCommandBuilder sqlCmdBuilder = new SqlCommandBuilder();
 
+                try
+                {
+                    connectionString = connectionStringTKGAFFAIRS;
+                    sqlConn = new SqlConnection(connectionString);
+
+                    sbSql.Clear();
+                    sbSqlQuery.Clear();
+
+                    sbSql.AppendFormat(@"  SELECT [ID],[CARDNO],[NAME] FROM [TKGAFFAIRS].[dbo].[WHITELIST]");
+                    sbSql.AppendFormat(@"  ");
+                    sbSql.AppendFormat(@"  ");
+                    sbSql.AppendFormat(@"  ");
+       
+
+                    adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                    sqlCmdBuilder = new SqlCommandBuilder(adapter);
+                    sqlConn.Open();
+                    ds.Clear();
+                    adapter.Fill(ds, "ds");
+                    sqlConn.Close();
+
+
+                    if (ds.Tables["ds"].Rows.Count == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        if (ds.Tables["ds"].Rows.Count >= 1)
+                        {
+                            foreach (DataRow dr in ds.Tables["ds"].Rows)
+                            {
+                                if(dr["CARDNO"].ToString().Trim().Equals(textBox1.Text.Trim()))
+                                {
+                                    MessageBox.Show(textBox1.Text);
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+                catch
+                {
+
+                }
+                finally
+                {
+
+                }
+            }
+        }
 
         #endregion
 
