@@ -749,6 +749,9 @@ namespace TKSG
         {
             SqlCommand cmd = new SqlCommand();
 
+            string MODIFYCASUE;
+            MODIFYCASUE = CHECKMODIFYCASUE(CARDNO);
+
             try
             {
             
@@ -788,7 +791,7 @@ namespace TKSG
                 cmd.Parameters.AddWithValue("@HREngFrm001BakTime", DateTime.Now.ToString("HH:mm"));
                 cmd.Parameters.AddWithValue("@CRADNO",CARDNO );
                 cmd.Parameters.AddWithValue("@MODIFYUSR", NAME + ID);
-                cmd.Parameters.AddWithValue("@MODIFYCASUE", "");
+                cmd.Parameters.AddWithValue("@MODIFYCASUE", MODIFYCASUE);
                 cmd.Parameters.AddWithValue("@MODIFYTIME", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 
                 cmd.Connection = sqlConn;
@@ -822,6 +825,74 @@ namespace TKSG
             }
         }
 
+        public string CHECKMODIFYCASUE(string CARDNO)
+        {
+            string MODIFYCASUE="";
+
+            if (!string.IsNullOrEmpty(CARDNO))
+            {
+                DataSet ds = new DataSet();
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                SqlCommandBuilder sqlCmdBuilder = new SqlCommandBuilder();
+
+                try
+                {
+                    connectionString = connectionStringTKGAFFAIRS;
+                    sqlConn = new SqlConnection(connectionString);
+
+                    sbSql.Clear();
+                    sbSqlQuery.Clear();
+
+
+                    sbSql.AppendFormat(@"  SELECT [HREngFrm001User]   FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
+                    sbSql.AppendFormat(@"  WHERE [HREngFrm001OutDate]='{0}' AND  [CRADNO]='{1}' ", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
+                    sbSql.AppendFormat(@"  ");
+
+
+                    adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                    sqlCmdBuilder = new SqlCommandBuilder(adapter);
+                    sqlConn.Open();
+                    ds.Clear();
+                    adapter.Fill(ds, "ds");
+                    sqlConn.Close();
+
+
+                    if (ds.Tables["ds"].Rows.Count == 0)
+                    {
+                        MODIFYCASUE="離開公司";
+                    }
+                    else if (ds.Tables["ds"].Rows.Count >= 1)
+                    {
+                        int COUNTS = ds.Tables["ds"].Rows.Count;
+
+                        if (COUNTS % 2 == 1)
+                        {
+                            MODIFYCASUE="返回公司";
+                        }
+                        else if (COUNTS % 2 == 0)
+                        {
+                            MODIFYCASUE="離開公司";
+                        }
+
+                    }
+                    
+
+                }
+                catch
+                {
+                   
+                }
+                finally
+                {
+                    sqlConn.Close();
+                }
+                
+            }
+
+            return MODIFYCASUE;
+
+        }
         #endregion
 
         #region BUTTON
