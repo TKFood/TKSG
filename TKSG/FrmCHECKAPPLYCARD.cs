@@ -86,6 +86,16 @@ namespace TKSG
                 CARDNO = null;
             }
 
+
+            if (!string.IsNullOrEmpty(textBox2.Text))
+            {
+                CARDNO = textBox2.Text;
+                textBox2.Text = null;
+
+                SEARCHHREngFrm001B(CARDNO);
+                CARDNO = null;
+            }
+
         }
 
 
@@ -93,11 +103,19 @@ namespace TKSG
         {
             if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
             {
-                SEARCHHREngFrm001(textBox1.Text.Trim());
+                SEARCHHREngFrm001textBox1(textBox1.Text.Trim());
             }
         }
 
-        public void SEARCHHREngFrm001(string CARDNO)
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
+            {
+                SEARCHHREngFrm001textBox2(textBox2.Text.Trim());
+            }
+        }
+
+        public void SEARCHHREngFrm001textBox1(string CARDNO)
         {
             try
             {
@@ -131,9 +149,9 @@ namespace TKSG
 
                 if (ds.Tables["TEMPds1"].Rows.Count == 0)
                 {
-                    dataGridView1.DataSource = null;
+                    //dataGridView1.DataSource = null;
 
-                    CHECKWHITELIST();
+                    CHECKWHITELIST("離開公司");
 
                 }
                 else
@@ -165,6 +183,94 @@ namespace TKSG
                         SEARCHHREngFrm001B(CRADNO);
 
                         MessageBox.Show("實際外出時間" + TaskId + " " + HREngFrm001User);
+
+                        textBox1.Text = null;
+
+                    }
+
+                }
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+        }
+
+        public void SEARCHHREngFrm001textBox2(string CARDNO)
+        {
+            try
+            {
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sbSql.Clear();
+                sbSqlQuery.Clear();
+
+                StringBuilder query = new StringBuilder();
+
+                sbSql.AppendFormat(@"  SELECT ");
+                sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
+                sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
+                sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
+                sbSql.AppendFormat(@"  WHERE (ISNULL([HREngFrm001BakTime],'')='' AND [HREngFrm001CH]='是' ) ");
+                sbSql.AppendFormat(@"  AND [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}'", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO); ;
+                sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
+                sbSql.AppendFormat(@"  ");
+                sbSql.AppendFormat(@"  ");
+                sbSql.AppendFormat(@"  ");
+
+                adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                sqlCmdBuilder = new SqlCommandBuilder(adapter);
+                sqlConn.Open();
+                ds.Clear();
+                adapter.Fill(ds, "TEMPds1");
+                sqlConn.Close();
+
+
+                if (ds.Tables["TEMPds1"].Rows.Count == 0)
+                {
+                    //dataGridView1.DataSource = null;
+
+                    CHECKWHITELIST("返回公司");
+
+                }
+                else
+                {
+                    if (ds.Tables["TEMPds1"].Rows.Count >= 1)
+                    {
+                        //dataGridView1.DataSource = ds.Tables["TEMPds1"];
+                        //dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 10);
+
+                        //dataGridView1.AutoResizeColumns();
+
+                        //for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                        //{
+                        //    DataGridViewRow row = dataGridView1.Rows[i];
+                        //    row.Height = 60;
+                        //}
+
+                        string TaskId = ds.Tables["TEMPds1"].Rows[0]["TaskId"].ToString();
+                        string HREngFrm001User = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                        string HREngFrm001OutTime = ds.Tables["TEMPds1"].Rows[0]["實際外出時間"].ToString();
+                        string HREngFrm001BakTime = ds.Tables["TEMPds1"].Rows[0]["實際返廠時間"].ToString();
+                        string HREngFrm001FF = ds.Tables["TEMPds1"].Rows[0]["是否由公司出發"].ToString();
+                        string HREngFrm001CH = ds.Tables["TEMPds1"].Rows[0]["是否回廠"].ToString();
+                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+
+                        INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "實際回廠時間");
+                        INSERTUOFHREngFrm001HREngFrm001BakTime(TaskId);
+
+                        SEARCHHREngFrm001B(CRADNO);
+
+                        MessageBox.Show("實際回廠時間" + TaskId + " " + HREngFrm001User);
+
+                        textBox2.Text = null;
 
                     }
 
@@ -267,90 +373,59 @@ namespace TKSG
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            //if (dataGridView1.CurrentRow != null && !string.IsNullOrEmpty(textBox1.Text))
-            //{
-            //    int rowindex = dataGridView1.CurrentRow.Index;
-            //    if (rowindex >= 0)
-            //    {
-            //        DataGridViewRow row = dataGridView1.Rows[rowindex];
-
-            //        string TaskId = row.Cells["TaskId"].Value.ToString();
-            //        string HREngFrm001User = row.Cells["申請人"].Value.ToString();
-            //        string HREngFrm001OutTime = row.Cells["實際外出時間"].Value.ToString();
-            //        string HREngFrm001BakTime = row.Cells["實際返廠時間"].Value.ToString();
-            //        string HREngFrm001FF = row.Cells["是否由公司出發"].Value.ToString();
-            //        string HREngFrm001CH = row.Cells["是否回廠"].Value.ToString();
-
-            //        if (!string.IsNullOrEmpty(textBox1.Text)&&STATUS.Equals("Y"))
-            //        {
-            //            CEHCK(TaskId, HREngFrm001User, HREngFrm001OutTime, HREngFrm001BakTime, HREngFrm001FF, HREngFrm001CH);
-            //        }
-
-
-            //        //if (STATUS.Equals("Y") && ds.Tables["TEMPds1"].Rows.Count == 1)
-            //        //{
-            //        //    CEHCK(TaskId, HREngFrm001User, HREngFrm001OutTime, HREngFrm001BakTime, HREngFrm001FF, HREngFrm001CH);
-            //        //}
-
-            //    }
-            //    else
-            //    {
-
-
-            //    }
-            //}
+           
         }
 
         public void CEHCK(string TaskId, string HREngFrm001User, string HREngFrm001OutTime, string HREngFrm001BakTime, string HREngFrm001FF, string HREngFrm001CH)
         {
-            if (STATUS.Equals("Y"))
-            {
-                INSERTHREngFrm001HREngFrm001OutTime(TaskId, HREngFrm001User, "實際外出時間");
-                INSERTUOFHREngFrm001HREngFrm001OutTime(TaskId);
+            //if (STATUS.Equals("Y"))
+            //{
+            //    INSERTHREngFrm001HREngFrm001OutTime(TaskId, HREngFrm001User, "實際外出時間");
+            //    INSERTUOFHREngFrm001HREngFrm001OutTime(TaskId);
 
-                STATUS = "N";
+            //    STATUS = "N";
 
-                if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
-                {
-                    SEARCHHREngFrm001B(textBox1.Text.Trim());
-                    textBox1.Text = null;
-                }
+            //    if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
+            //    {
+            //        SEARCHHREngFrm001B(textBox1.Text.Trim());
+            //        textBox1.Text = null;
+            //    }
 
-                MessageBox.Show("實際外出時間" + TaskId + " " + HREngFrm001User);
-            }
+            //    MessageBox.Show("實際外出時間" + TaskId + " " + HREngFrm001User);
+            //}
 
-            else if (STATUS.Equals("Y") && !HREngFrm001FF.Equals("是") && HREngFrm001CH.Equals("是") && string.IsNullOrEmpty(HREngFrm001BakTime))
-            {
-                INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "1實際返廠時間");
-                INSERTUOFHREngFrm001HREngFrm001BakTime(TaskId);
+            //else if (STATUS.Equals("Y") && !HREngFrm001FF.Equals("是") && HREngFrm001CH.Equals("是") && string.IsNullOrEmpty(HREngFrm001BakTime))
+            //{
+            //    INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "1實際返廠時間");
+            //    INSERTUOFHREngFrm001HREngFrm001BakTime(TaskId);
 
-                STATUS = "N";
+            //    STATUS = "N";
 
-                if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
-                {
-                    SEARCHHREngFrm001(textBox1.Text.Trim());
-                    //textBox1.Text = null;
-                }
-
-
-                //MessageBox.Show("1實際返廠時間" + TaskId + " " + HREngFrm001User);
-            }
-            else if (STATUS.Equals("Y") && HREngFrm001FF.Equals("是") && !string.IsNullOrEmpty(HREngFrm001OutTime) && HREngFrm001CH.Equals("是") && string.IsNullOrEmpty(HREngFrm001BakTime))
-            {
-                INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "2實際返廠時間");
-                INSERTUOFHREngFrm001HREngFrm001BakTime(TaskId);
-
-                STATUS = "N";
-
-                if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
-                {
-                    SEARCHHREngFrm001(textBox1.Text.Trim());
-                    //textBox1.Text = null;
-                }
+            //    if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
+            //    {
+            //        SEARCHHREngFrm001(textBox1.Text.Trim());
+            //        //textBox1.Text = null;
+            //    }
 
 
-                //MessageBox.Show("2實際返廠時間" + TaskId + " " + HREngFrm001User);
-            }
+            //    //MessageBox.Show("1實際返廠時間" + TaskId + " " + HREngFrm001User);
+            //}
+            //else if (STATUS.Equals("Y") && HREngFrm001FF.Equals("是") && !string.IsNullOrEmpty(HREngFrm001OutTime) && HREngFrm001CH.Equals("是") && string.IsNullOrEmpty(HREngFrm001BakTime))
+            //{
+            //    INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "2實際返廠時間");
+            //    INSERTUOFHREngFrm001HREngFrm001BakTime(TaskId);
+
+            //    STATUS = "N";
+
+            //    if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
+            //    {
+            //        SEARCHHREngFrm001(textBox1.Text.Trim());
+            //        //textBox1.Text = null;
+            //    }
+
+
+            //    //MessageBox.Show("2實際返廠時間" + TaskId + " " + HREngFrm001User);
+            //}
 
 
 
@@ -472,6 +547,8 @@ namespace TKSG
 
         public void INSERTUOFHREngFrm001HREngFrm001OutTime(string TaskId)
         {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommandBuilder sqlCmdBuilder = new SqlCommandBuilder();
             DataSet ds = new DataSet();
 
             try
@@ -525,7 +602,7 @@ namespace TKSG
             }
             finally
             {
-
+                sqlConn.Close();
             }
         }
 
@@ -586,11 +663,13 @@ namespace TKSG
 
         public void INSERTUOFHREngFrm001HREngFrm001BakTime(string TaskId)
         {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            SqlCommandBuilder sqlCmdBuilder = new SqlCommandBuilder();
             DataSet ds = new DataSet();
 
             try
             {
-                connectionString = connectionStringTKGAFFAIRS;
+                connectionString = connectionStringUOF;
                 sqlConn = new SqlConnection(connectionString);
 
                 sbSql.Clear();
@@ -639,8 +718,10 @@ namespace TKSG
             }
             finally
             {
-
+                sqlConn.Close();
             }
+
+         
         }
 
         public void UPDATETUOFHREngFrm001HREngFrm001BakTime(string TaskId, XmlDocument Xmldoc)
@@ -698,7 +779,7 @@ namespace TKSG
             }
         }
 
-        public void CHECKWHITELIST()
+        public void CHECKWHITELIST(string MODIFYCASUE)
         {
             if(!string.IsNullOrEmpty(textBox1.Text))
             {
@@ -741,7 +822,66 @@ namespace TKSG
                             {
                                 if(dr["CARDNO"].ToString().Trim().Equals(textBox1.Text.Trim()))
                                 {
-                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim());
+                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
+                                    //MessageBox.Show(textBox1.Text);
+                                }
+                            }
+                        }
+
+                    }
+
+                }
+                catch
+                {
+
+                }
+                finally
+                {
+
+                }
+            }
+            else if (!string.IsNullOrEmpty(textBox2.Text))
+            {
+                DataSet ds = new DataSet();
+                SqlDataAdapter adapter = new SqlDataAdapter();
+                SqlCommandBuilder sqlCmdBuilder = new SqlCommandBuilder();
+
+                try
+                {
+                    connectionString = connectionStringTKGAFFAIRS;
+                    sqlConn = new SqlConnection(connectionString);
+
+                    sbSql.Clear();
+                    sbSqlQuery.Clear();
+
+                    sbSql.AppendFormat(@"  SELECT [ID],[CARDNO],[NAME] FROM [TKGAFFAIRS].[dbo].[WHITELIST]");
+                    sbSql.AppendFormat(@"  ");
+                    sbSql.AppendFormat(@"  ");
+                    sbSql.AppendFormat(@"  ");
+
+
+                    adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                    sqlCmdBuilder = new SqlCommandBuilder(adapter);
+                    sqlConn.Open();
+                    ds.Clear();
+                    adapter.Fill(ds, "ds");
+                    sqlConn.Close();
+
+
+                    if (ds.Tables["ds"].Rows.Count == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        if (ds.Tables["ds"].Rows.Count >= 1)
+                        {
+                            foreach (DataRow dr in ds.Tables["ds"].Rows)
+                            {
+                                if (dr["CARDNO"].ToString().Trim().Equals(textBox2.Text.Trim()))
+                                {
+                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
                                     //MessageBox.Show(textBox1.Text);
                                 }
                             }
@@ -761,12 +901,10 @@ namespace TKSG
             }
         }
 
-        public void ADDTOHREngFrm001(string ID,string CARDNO,string NAME)
+        public void ADDTOHREngFrm001(string ID,string CARDNO,string NAME,string MODIFYCASUE)
         {
             SqlCommand cmd = new SqlCommand();
-
-            string MODIFYCASUE;
-            MODIFYCASUE = CHECKMODIFYCASUE(CARDNO);
+         
 
             try
             {
@@ -917,8 +1055,9 @@ namespace TKSG
             SEARCHHREngFrm001B("");
         }
 
+
         #endregion
 
-
+        
     }
 }
