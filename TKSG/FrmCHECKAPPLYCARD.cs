@@ -25,7 +25,10 @@ namespace TKSG
     {
         String connectionStringTKSG = "server=192.168.1.105;database=TKSG;uid=sa;pwd=dsc";
         String connectionStringTKGAFFAIRS = "server=192.168.1.105;database=TKGAFFAIRS;uid=sa;pwd=dsc";
-        String connectionStringUOF = "server=192.168.1.223;database=UOF;uid=TKUOF;pwd=TKUOF123456";
+        String connectionStringUOF = "server=192.168.1.223;database=UOFTEST;uid=TKUOF;pwd=TKUOF123456";
+
+        //string DB = "UOF";
+        string DB = "UOFTEST";
 
         SqlConnection sqlConn = new SqlConnection();
         SqlCommand sqlComm = new SqlCommand();
@@ -50,8 +53,6 @@ namespace TKSG
         string TaskId;
         string CARDNO;
 
-        string DB = "UOF";
-        //string DB = "UOFTEST";
 
         //用STATUS來控制在1分鐘內不得連續刷卡
         string STATUS = "Y";
@@ -98,7 +99,6 @@ namespace TKSG
 
         public void SEARCHHREngFrm001(string CARDNO)
         {
-
             try
             {
                 connectionString = connectionStringTKGAFFAIRS;
@@ -113,8 +113,8 @@ namespace TKSG
                 sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
                 sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
                 sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
-                sbSql.AppendFormat(@"  WHERE [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}'", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
-                sbSql.AppendFormat(@"  AND ((ISNULL([HREngFrm001OutTime],'')='' AND [HREngFrm001FF]='是' ) OR (ISNULL([HREngFrm001BakTime],'')='' AND [HREngFrm001CH]='是' ))");
+                sbSql.AppendFormat(@"  WHERE (ISNULL([HREngFrm001OutTime],'')='' AND [HREngFrm001FF]='是' ) ");
+                sbSql.AppendFormat(@"  AND [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}'", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO); ;
                 sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
                 sbSql.AppendFormat(@"  ");
                 sbSql.AppendFormat(@"  ");
@@ -140,18 +140,31 @@ namespace TKSG
                 {
                     if (ds.Tables["TEMPds1"].Rows.Count >= 1)
                     {
-                        dataGridView1.DataSource = ds.Tables["TEMPds1"];
-                        dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 10);
+                        //dataGridView1.DataSource = ds.Tables["TEMPds1"];
+                        //dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 10);
 
-                        dataGridView1.AutoResizeColumns();
+                        //dataGridView1.AutoResizeColumns();
 
-                        for (int i = 0; i < dataGridView1.Rows.Count; i++)
-                        {
-                            DataGridViewRow row = dataGridView1.Rows[i];
-                            row.Height = 60;
-                        }
+                        //for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                        //{
+                        //    DataGridViewRow row = dataGridView1.Rows[i];
+                        //    row.Height = 60;
+                        //}
 
+                        string TaskId = ds.Tables["TEMPds1"].Rows[0]["TaskId"].ToString();
+                        string HREngFrm001User = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                        string HREngFrm001OutTime = ds.Tables["TEMPds1"].Rows[0]["實際外出時間"].ToString();
+                        string HREngFrm001BakTime = ds.Tables["TEMPds1"].Rows[0]["實際返廠時間"].ToString();
+                        string HREngFrm001FF = ds.Tables["TEMPds1"].Rows[0]["是否由公司出發"].ToString();
+                        string HREngFrm001CH = ds.Tables["TEMPds1"].Rows[0]["是否回廠"].ToString();
+                        string CRADNO= ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
+                        INSERTHREngFrm001HREngFrm001OutTime(TaskId, HREngFrm001User, "實際外出時間");
+                        INSERTUOFHREngFrm001HREngFrm001OutTime(TaskId);
+
+                        SEARCHHREngFrm001B(CRADNO);
+
+                        MessageBox.Show("實際外出時間" + TaskId + " " + HREngFrm001User);
 
                     }
 
@@ -181,13 +194,14 @@ namespace TKSG
 
                 StringBuilder query = new StringBuilder();
 
-                if(string.IsNullOrEmpty(CARDNO))
+                if (string.IsNullOrEmpty(CARDNO))
                 {
                     sbSql.AppendFormat(@"  SELECT ");
                     sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
                     sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
                     sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
-                    sbSql.AppendFormat(@"  WHERE [HREngFrm001OutDate]='{0}' ", DateTime.Now.ToString("yyyy/MM/dd"));
+                    sbSql.AppendFormat(@"  WHERE ISNULL([HREngFrm001SN],'')<>''");
+                    sbSql.AppendFormat(@"  AND [HREngFrm001OutDate]='{0}' ", DateTime.Now.ToString("yyyy/MM/dd"));
                     sbSql.AppendFormat(@"  ORDER BY [HREngFrm001User],[HREngFrm001DefOutTime]");
                 }
                 else
@@ -196,10 +210,11 @@ namespace TKSG
                     sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
                     sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
                     sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
-                    sbSql.AppendFormat(@"  WHERE [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}'", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
+                    sbSql.AppendFormat(@"  WHERE ISNULL([HREngFrm001SN],'')<>''");
+                    sbSql.AppendFormat(@"  AND  [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}' ", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
                     sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
                 }
-                
+
                 sbSql.AppendFormat(@"  ");
                 sbSql.AppendFormat(@"  ");
                 sbSql.AppendFormat(@"  ");
@@ -252,43 +267,43 @@ namespace TKSG
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            if (dataGridView1.CurrentRow != null && !string.IsNullOrEmpty(textBox1.Text))
-            {
-                int rowindex = dataGridView1.CurrentRow.Index;
-                if (rowindex >= 0)
-                {
-                    DataGridViewRow row = dataGridView1.Rows[rowindex];
+            //if (dataGridView1.CurrentRow != null && !string.IsNullOrEmpty(textBox1.Text))
+            //{
+            //    int rowindex = dataGridView1.CurrentRow.Index;
+            //    if (rowindex >= 0)
+            //    {
+            //        DataGridViewRow row = dataGridView1.Rows[rowindex];
 
-                    string TaskId = row.Cells["TaskId"].Value.ToString();
-                    string HREngFrm001User = row.Cells["申請人"].Value.ToString();
-                    string HREngFrm001OutTime = row.Cells["實際外出時間"].Value.ToString();
-                    string HREngFrm001BakTime = row.Cells["實際返廠時間"].Value.ToString();
-                    string HREngFrm001FF = row.Cells["是否由公司出發"].Value.ToString();
-                    string HREngFrm001CH = row.Cells["是否回廠"].Value.ToString();
+            //        string TaskId = row.Cells["TaskId"].Value.ToString();
+            //        string HREngFrm001User = row.Cells["申請人"].Value.ToString();
+            //        string HREngFrm001OutTime = row.Cells["實際外出時間"].Value.ToString();
+            //        string HREngFrm001BakTime = row.Cells["實際返廠時間"].Value.ToString();
+            //        string HREngFrm001FF = row.Cells["是否由公司出發"].Value.ToString();
+            //        string HREngFrm001CH = row.Cells["是否回廠"].Value.ToString();
 
-                    if (!string.IsNullOrEmpty(textBox1.Text)&&STATUS.Equals("Y"))
-                    {
-                        CEHCK(TaskId, HREngFrm001User, HREngFrm001OutTime, HREngFrm001BakTime, HREngFrm001FF, HREngFrm001CH);
-                    }
-
-
-                    //if (STATUS.Equals("Y") && ds.Tables["TEMPds1"].Rows.Count == 1)
-                    //{
-                    //    CEHCK(TaskId, HREngFrm001User, HREngFrm001OutTime, HREngFrm001BakTime, HREngFrm001FF, HREngFrm001CH);
-                    //}
-
-                }
-                else
-                {
+            //        if (!string.IsNullOrEmpty(textBox1.Text)&&STATUS.Equals("Y"))
+            //        {
+            //            CEHCK(TaskId, HREngFrm001User, HREngFrm001OutTime, HREngFrm001BakTime, HREngFrm001FF, HREngFrm001CH);
+            //        }
 
 
-                }
-            }
+            //        //if (STATUS.Equals("Y") && ds.Tables["TEMPds1"].Rows.Count == 1)
+            //        //{
+            //        //    CEHCK(TaskId, HREngFrm001User, HREngFrm001OutTime, HREngFrm001BakTime, HREngFrm001FF, HREngFrm001CH);
+            //        //}
+
+            //    }
+            //    else
+            //    {
+
+
+            //    }
+            //}
         }
 
         public void CEHCK(string TaskId, string HREngFrm001User, string HREngFrm001OutTime, string HREngFrm001BakTime, string HREngFrm001FF, string HREngFrm001CH)
         {
-            if (STATUS.Equals("Y") && HREngFrm001FF.Equals("是") && string.IsNullOrEmpty(HREngFrm001OutTime))
+            if (STATUS.Equals("Y"))
             {
                 INSERTHREngFrm001HREngFrm001OutTime(TaskId, HREngFrm001User, "實際外出時間");
                 INSERTUOFHREngFrm001HREngFrm001OutTime(TaskId);
@@ -298,11 +313,12 @@ namespace TKSG
                 if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
                 {
                     SEARCHHREngFrm001B(textBox1.Text.Trim());
-                    //textBox1.Text = null;
+                    textBox1.Text = null;
                 }
 
-                //MessageBox.Show("實際外出時間"+ TaskId+" "+ HREngFrm001User);
+                MessageBox.Show("實際外出時間" + TaskId + " " + HREngFrm001User);
             }
+
             else if (STATUS.Equals("Y") && !HREngFrm001FF.Equals("是") && HREngFrm001CH.Equals("是") && string.IsNullOrEmpty(HREngFrm001BakTime))
             {
                 INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "1實際返廠時間");
