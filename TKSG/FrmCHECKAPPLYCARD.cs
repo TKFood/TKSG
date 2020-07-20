@@ -65,7 +65,7 @@ namespace TKSG
             label6.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
             timer1.Enabled = true;
-            timer1.Interval = 1000 * 1;
+            timer1.Interval = 1000 * 10;
             timer1.Start();
         }
 
@@ -151,8 +151,11 @@ namespace TKSG
                 {
                     //dataGridView1.DataSource = null;
 
+                    string CRADNO = textBox1.Text.Trim();
+
                     CHECKWHITELIST("離開公司");
 
+                    SEARCHHREngFrm001C(CRADNO);
                 }
                 else
                 {
@@ -236,9 +239,11 @@ namespace TKSG
                 if (ds.Tables["TEMPds1"].Rows.Count == 0)
                 {
                     //dataGridView1.DataSource = null;
+                    string CRADNO = textBox2.Text.Trim();
 
                     CHECKWHITELIST("返回公司");
 
+                    SEARCHHREngFrm001C(CRADNO);
                 }
                 else
                 {
@@ -320,6 +325,81 @@ namespace TKSG
                     sbSql.AppendFormat(@"  AND  [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}' ", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
                     sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
                 }
+
+                sbSql.AppendFormat(@"  ");
+                sbSql.AppendFormat(@"  ");
+                sbSql.AppendFormat(@"  ");
+
+                adapter2 = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                sqlCmdBuilder2 = new SqlCommandBuilder(adapter2);
+                sqlConn.Open();
+                ds2.Clear();
+                adapter2.Fill(ds2, "ds2");
+                sqlConn.Close();
+
+
+                if (ds2.Tables["ds2"].Rows.Count == 0)
+                {
+                    dataGridView1.DataSource = null;
+
+                }
+                else
+                {
+                    if (ds2.Tables["ds2"].Rows.Count >= 1)
+                    {
+                        dataGridView1.DataSource = ds2.Tables["ds2"];
+                        dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 10);
+
+                        dataGridView1.AutoResizeColumns();
+
+                        for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                        {
+                            DataGridViewRow row = dataGridView1.Rows[i];
+                            row.Height = 60;
+                        }
+
+
+
+                    }
+
+                }
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+        }
+
+        public void SEARCHHREngFrm001C(string CARDNO)
+        {
+
+            try
+            {
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sbSql.Clear();
+                sbSqlQuery.Clear();
+
+                StringBuilder query = new StringBuilder();
+
+                if (!string.IsNullOrEmpty(CARDNO))
+                {
+                    sbSql.AppendFormat(@"  SELECT ");
+                    sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
+                    sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
+                    sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
+                    sbSql.AppendFormat(@"  WHERE ISNULL([HREngFrm001SN],'')=''");
+                    sbSql.AppendFormat(@"  AND  [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}' ", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
+                    sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
+                }
+              
 
                 sbSql.AppendFormat(@"  ");
                 sbSql.AppendFormat(@"  ");
