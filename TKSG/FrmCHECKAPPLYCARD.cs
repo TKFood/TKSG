@@ -65,7 +65,7 @@ namespace TKSG
             label6.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
             timer1.Enabled = true;
-            timer1.Interval = 1000 * 10;
+            timer1.Interval = 1000 * 30;
             timer1.Start();
         }
 
