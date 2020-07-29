@@ -220,7 +220,7 @@ namespace TKSG
                 sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
                 sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
                 sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
-                sbSql.AppendFormat(@"  WHERE (ISNULL([HREngFrm001BakTime],'')='' AND [HREngFrm001CH]='是' ) ");
+                sbSql.AppendFormat(@"  WHERE ((ISNULL([HREngFrm001BakTime],'')='' AND [HREngFrm001CH]='是' AND ISNULL([HREngFrm001OutTime],'')<>'' AND [HREngFrm001FF]='是' ) OR ( [HREngFrm001FF]='否') )");
                 sbSql.AppendFormat(@"  AND [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}'", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO); ;
                 sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
                 sbSql.AppendFormat(@"  ");
