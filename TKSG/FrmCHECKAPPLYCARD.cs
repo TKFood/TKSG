@@ -101,18 +101,18 @@ namespace TKSG
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
-            {
-                SEARCHHREngFrm001textBox1(textBox1.Text.Trim());
-            }
+            //if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
+            //{
+            //    SEARCHHREngFrm001textBox1(textBox1.Text.Trim());
+            //}
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-             if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
-            {
-                SEARCHHREngFrm001textBox2(textBox2.Text.Trim());
-            }
+            // if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
+            //{
+            //    SEARCHHREngFrm001textBox2(textBox2.Text.Trim());
+            //}
         }
 
         public void SEARCHHREngFrm001textBox1(string CARDNO)
@@ -1145,6 +1145,32 @@ namespace TKSG
             return MODIFYCASUE;
 
         }
+
+        private void textBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
+                {
+                    SEARCHHREngFrm001textBox1(textBox1.Text.Trim());
+                }
+            }
+               
+        }
+
+        private void textBox2_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+
+                if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
+                {
+                    SEARCHHREngFrm001textBox2(textBox2.Text.Trim());
+                }
+            }
+      
+        }
+
         #endregion
 
         #region BUTTON
@@ -1154,8 +1180,10 @@ namespace TKSG
         }
 
 
+
+
         #endregion
 
-        
+      
     }
 }
