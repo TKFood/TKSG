@@ -109,7 +109,7 @@ namespace TKSG
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
+             if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
             {
                 SEARCHHREngFrm001textBox2(textBox2.Text.Trim());
             }
@@ -861,7 +861,10 @@ namespace TKSG
 
         public void CHECKWHITELIST(string MODIFYCASUE)
         {
-            if(!string.IsNullOrEmpty(textBox1.Text))
+            string STATUS1="N";
+            string STATUS2= "N";
+
+            if (!string.IsNullOrEmpty(textBox1.Text))
             {
                 DataSet ds = new DataSet();
                 SqlDataAdapter adapter = new SqlDataAdapter();
@@ -903,6 +906,9 @@ namespace TKSG
                                 if(dr["CARDNO"].ToString().Trim().Equals(textBox1.Text.Trim()))
                                 {
                                     ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
+
+                                    STATUS1 = "Y";
+                                    MessageBox.Show("白名單人員"+ textBox1.Text.Trim());
                                     //MessageBox.Show(textBox1.Text);
                                 }
                             }
@@ -918,6 +924,11 @@ namespace TKSG
                 finally
                 {
 
+                }
+
+                if(STATUS1.Equals("N"))
+                {
+                    MessageBox.Show("查無資料");
                 }
             }
             else if (!string.IsNullOrEmpty(textBox2.Text))
@@ -962,7 +973,9 @@ namespace TKSG
                                 if (dr["CARDNO"].ToString().Trim().Equals(textBox2.Text.Trim()))
                                 {
                                     ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
-                                    //MessageBox.Show(textBox1.Text);
+
+                                    STATUS2 = "Y";
+                                    MessageBox.Show("白名單人員" + textBox2.Text.Trim());
                                 }
                             }
                         }
@@ -977,6 +990,11 @@ namespace TKSG
                 finally
                 {
 
+                }
+
+                if (STATUS2.Equals("N"))
+                {
+                    MessageBox.Show("查無資料");
                 }
             }
         }
@@ -1018,10 +1036,10 @@ namespace TKSG
                 cmd.Parameters.AddWithValue("@HREngFrm001LicPlate","" );
                 cmd.Parameters.AddWithValue("@HREngFrm001Cause", "可自由外出人員" );
                 cmd.Parameters.AddWithValue("@HREngFrm001DefOutTime", DateTime.Now.ToString("HH:mm"));
-                cmd.Parameters.AddWithValue("@HREngFrm001FF", "否");
+                cmd.Parameters.AddWithValue("@HREngFrm001FF", "是");
                 cmd.Parameters.AddWithValue("@HREngFrm001OutTime", DateTime.Now.ToString("HH:mm"));
                 cmd.Parameters.AddWithValue("@HREngFrm001DefBakTime", DateTime.Now.ToString("HH:mm"));
-                cmd.Parameters.AddWithValue("@HREngFrm001CH", "否");
+                cmd.Parameters.AddWithValue("@HREngFrm001CH", "是");
                 cmd.Parameters.AddWithValue("@HREngFrm001BakTime", DateTime.Now.ToString("HH:mm"));
                 cmd.Parameters.AddWithValue("@CRADNO",CARDNO );
                 cmd.Parameters.AddWithValue("@MODIFYUSR", NAME + ID);
