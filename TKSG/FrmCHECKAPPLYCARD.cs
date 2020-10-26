@@ -878,10 +878,12 @@ namespace TKSG
                     sbSql.Clear();
                     sbSqlQuery.Clear();
 
-                    sbSql.AppendFormat(@"  SELECT [ID],[CARDNO],[NAME] FROM [TKGAFFAIRS].[dbo].[WHITELIST]");
-                    sbSql.AppendFormat(@"  ");
-                    sbSql.AppendFormat(@"  ");
-                    sbSql.AppendFormat(@"  ");
+                  
+                    sbSql.AppendFormat(@"  
+                                     SELECT [WHITELIST].[ID],[Person].[CardNo],[WHITELIST].[NAME] 
+                                     FROM [TKGAFFAIRS].[dbo].[WHITELIST]
+                                     LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [WHITELIST].ID=[Person].[UserID]
+                                    ");
        
 
                     adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
@@ -903,9 +905,9 @@ namespace TKSG
                         {
                             foreach (DataRow dr in ds.Tables["ds"].Rows)
                             {
-                                if(dr["CARDNO"].ToString().Trim().Equals(textBox1.Text.Trim()))
+                                if(dr["CardNo"].ToString().Trim().Equals(textBox1.Text.Trim()))
                                 {
-                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
+                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CardNo"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
 
                                     STATUS1 = "Y";
                                     MessageBox.Show("白名單人員"+ textBox1.Text.Trim());
@@ -945,10 +947,11 @@ namespace TKSG
                     sbSql.Clear();
                     sbSqlQuery.Clear();
 
-                    sbSql.AppendFormat(@"  SELECT [ID],[CARDNO],[NAME] FROM [TKGAFFAIRS].[dbo].[WHITELIST]");
-                    sbSql.AppendFormat(@"  ");
-                    sbSql.AppendFormat(@"  ");
-                    sbSql.AppendFormat(@"  ");
+                    sbSql.AppendFormat(@"  
+                                         SELECT [WHITELIST].[ID],[Person].[CardNo],[WHITELIST].[NAME] 
+                                         FROM [TKGAFFAIRS].[dbo].[WHITELIST]
+                                         LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [WHITELIST].ID=[Person].[UserID]
+                                        ");
 
 
                     adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
@@ -970,9 +973,9 @@ namespace TKSG
                         {
                             foreach (DataRow dr in ds.Tables["ds"].Rows)
                             {
-                                if (dr["CARDNO"].ToString().Trim().Equals(textBox2.Text.Trim()))
+                                if (dr["CardNo"].ToString().Trim().Equals(textBox2.Text.Trim()))
                                 {
-                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CARDNO"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
+                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CardNo"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
 
                                     STATUS2 = "Y";
                                     MessageBox.Show("白名單人員" + textBox2.Text.Trim());
