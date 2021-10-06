@@ -10,6 +10,9 @@ using System.Data.SqlClient;
 using System.Configuration;
 using System.Reflection;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using TKITDLL;
 
 namespace TKSG
 {
@@ -89,8 +92,11 @@ namespace TKSG
             datransaction.Fill(dtransaction);
 
 
+
             //ADD USED LOG
-            TKSYSPRUSED(MethodBase.GetCurrentMethod().DeclaringType.Namespace, dtransaction.Rows[0]["FRM_CODE"].ToString(), sender.ToString(), UserName);
+            List<string> IPAddress = GetHostIPAddress();
+            //MessageBox.Show(IPAddress[0].ToString());            
+            TKSYSPRUSED(MethodBase.GetCurrentMethod().DeclaringType.Namespace, dtransaction.Rows[0]["FRM_CODE"].ToString(), sender.ToString(), UserName, IPAddress[0].ToString());
 
             Assembly frmAssembly = Assembly.LoadFile(Application.ExecutablePath);
             foreach (Type type in frmAssembly.GetTypes())
@@ -127,15 +133,14 @@ namespace TKSG
 
         }
 
-        public void TKSYSPRUSED(string SYSTEMNAME, string PROGRAMCODE, string PROGRAMNAME, string USEDID)
+        public void TKSYSPRUSED(string SYSTEMNAME, string PROGRAMCODE, string PROGRAMNAME, string USEDID, string USEDIP)
         {
             SqlConnection sqlConn = new SqlConnection();
             SqlTransaction tran;
             SqlCommand cmd = new SqlCommand();
             int result;
             StringBuilder sbSql = new StringBuilder();
-
-
+          
             sqlConn = new SqlConnection(connectionString);
 
 
@@ -149,9 +154,9 @@ namespace TKSG
 
             sbSql.AppendFormat(@" 
                                 INSERT INTO [TKIT].[dbo].[TKSYSPRUSED]
-                                ([SYSTEMNAME],[PROGRAMCODE],[PROGRAMNAME],[USEDDATES],[USEDID])
+                                ([SYSTEMNAME],[PROGRAMCODE],[PROGRAMNAME],[USEDDATES],[USEDID],[USEDIP])
                                 VALUES
-                                (@SYSTEMNAME,@PROGRAMCODE,@PROGRAMNAME,@USEDDATES,@USEDID)
+                                (@SYSTEMNAME,@PROGRAMCODE,@PROGRAMNAME,@USEDDATES,@USEDID,@USEDIP)
                                 ");
 
 
@@ -163,6 +168,7 @@ namespace TKSG
                 command.Parameters.AddWithValue("@PROGRAMNAME", PROGRAMNAME);
                 command.Parameters.AddWithValue("@USEDDATES", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                 command.Parameters.AddWithValue("@USEDID", USEDID);
+                command.Parameters.AddWithValue("@USEDIP", USEDIP);
 
                 try
                 {
@@ -182,6 +188,26 @@ namespace TKSG
             }
 
 
+        }
+
+        // <summary>
+        /// 取得本機 IP Address
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetHostIPAddress()
+        {
+            List<string> lstIPAddress = new List<string>();
+            IPHostEntry IpEntry = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ipa in IpEntry.AddressList)
+            {
+                if (ipa.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    lstIPAddress.Add(ipa.ToString());
+                    //MessageBox.Show(ipa.ToString());
+                }
+
+            }
+            return lstIPAddress; // result: 192.168.1.17 ......
         }
     }
 }
