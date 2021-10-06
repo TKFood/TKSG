@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Reflection;
+using System.Net;
+using System.Net.Sockets;
 
 namespace TKSG
 {
@@ -55,6 +57,11 @@ namespace TKSG
                 //If count is equal to 1, than show frmMain form
                 if (count == 1)
                 {
+                    //ADD USED LOG
+                    List<string> IPAddress = GetHostIPAddress();
+                    //MessageBox.Show(IPAddress[0].ToString());    
+                    ADDTKSYSLOGIN(MethodBase.GetCurrentMethod().DeclaringType.Namespace, txt_UserName.Text.Trim(), IPAddress[0].ToString(), "SUCCESS");
+
                     //MessageBox.Show("登入成功!");
 
                     FrmParent fm = new FrmParent(txt_UserName.Text.ToString());
@@ -63,7 +70,13 @@ namespace TKSG
                 }
                 else
                 {
+                    //ADD USED LOG
+                    List<string> IPAddress = GetHostIPAddress();
+                    //MessageBox.Show(IPAddress[0].ToString());    
+                    ADDTKSYSLOGIN(MethodBase.GetCurrentMethod().DeclaringType.Namespace, txt_UserName.Text.Trim(), IPAddress[0].ToString(), "FAIL");
+
                     MessageBox.Show("登入失敗!");
+
                 }
             }
             catch (Exception ex)
@@ -72,6 +85,82 @@ namespace TKSG
             }
         }
 
+
+        public void ADDTKSYSLOGIN(string SYSTEMNAME, string USEDID, string USEDIP, string LOGIN)
+        {
+            SqlConnection sqlConn = new SqlConnection();
+            SqlTransaction tran;
+            SqlCommand cmd = new SqlCommand();
+            int result;
+            StringBuilder sbSql = new StringBuilder();
+
+
+            sqlConn = new SqlConnection(connectionString);
+
+
+            sqlConn.Close();
+            sqlConn.Open();
+            tran = sqlConn.BeginTransaction();
+
+            sbSql.Clear();
+
+
+
+            sbSql.AppendFormat(@" 
+                                INSERT INTO [TKIT].[dbo].[TKSYSLOGIN]
+                                ([SYSTEMNAME],[USEDDATES],[USEDID],[USEDIP],[LOGIN])
+                                VALUES
+                                (@SYSTEMNAME,@USEDDATES,@USEDID,@USEDIP,@LOGIN)
+                                ");
+
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                SqlCommand command = new SqlCommand(sbSql.ToString(), connection);
+                command.Parameters.AddWithValue("@SYSTEMNAME", SYSTEMNAME);
+                command.Parameters.AddWithValue("@USEDDATES", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+                command.Parameters.AddWithValue("@USEDID", USEDID);
+                command.Parameters.AddWithValue("@USEDIP", USEDIP);
+                command.Parameters.AddWithValue("@LOGIN", LOGIN);
+                try
+                {
+                    connection.Open();
+                    Int32 rowsAffected = command.ExecuteNonQuery();
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+                finally
+                {
+                    sqlConn.Close();
+                }
+            }
+
+
+        }
+
+        // <summary>
+        /// 取得本機 IP Address
+        /// </summary>
+        /// <returns></returns>
+        private List<string> GetHostIPAddress()
+        {
+            List<string> lstIPAddress = new List<string>();
+            IPHostEntry IpEntry = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (IPAddress ipa in IpEntry.AddressList)
+            {
+                if (ipa.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    lstIPAddress.Add(ipa.ToString());
+                    //MessageBox.Show(ipa.ToString());
+                }
+
+            }
+            return lstIPAddress; // result: 192.168.1.17 ......
+        }
         #endregion
 
         #region FUNCTION
