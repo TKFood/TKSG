@@ -62,11 +62,40 @@ namespace TKSG
         public frmCHECKZ_SCSHR_LEAVE()
         {
             InitializeComponent();
+
+            label6.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+
+            timer1.Enabled = true;
+            timer1.Interval = 1000 * 30;
+            timer1.Start();
         }
 
 
         #region FUNCTION
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            label6.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
+            STATUS = "Y";
 
+            if (!string.IsNullOrEmpty(textBox1.Text))
+            {
+                CARDNO = textBox1.Text;
+                textBox1.Text = null;
+
+                SEARCHHREngFrm001B(CARDNO);
+                CARDNO = null;
+            }
+
+
+            if (!string.IsNullOrEmpty(textBox2.Text))
+            {
+                CARDNO = textBox2.Text;
+                textBox2.Text = null;
+
+                SEARCHHREngFrm001B(CARDNO);
+                CARDNO = null;
+            }
+        }
         public void ADDZ_SCSHR_LEAVE()
         {
             DataSet Z_SCSHR_LEAV = SEARCHHZ_SCSHR_LEAV();
@@ -88,11 +117,11 @@ namespace TKSG
                     {
                         sbSql.AppendFormat(@" 
                                             INSERT INTO [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
-                                            ([DOC_NBR],[TASK_STATUS],[TASK_RESULT],[GROUP_CODE],[APPLICANT],[APPLICANTGUID],[APPLICANTCOMP],[APPLICANTDEPT],[APPLICANTDATE],[LEAEMP],[LEAAGENT],[LEACODE],[LEACODENAME],[SP_DATE],[SP_NAME],[STARTTIME],[ENDTIME],[LEAHOURS],[LEADAYS],[REMARK],[CANCEL_DOC_NBR],[CANCEL_STATUS],[SCSHR],[SCSHRMSG])
+                                            ([DOC_NBR],[TASK_STATUS],[TASK_RESULT],[GROUP_CODE],[APPLICANT],[APPLICANTGUID],[APPLICANTCOMP],[APPLICANTDEPT],[APPLICANTDATE],[LEAEMP],[LEAAGENT],[LEACODE],[LEACODENAME],[SP_DATE],[SP_NAME],[STARTTIME],[ENDTIME],[LEAHOURS],[LEADAYS],[REMARK],[CANCEL_DOC_NBR],[CANCEL_STATUS],[SCSHR],[SCSHRMSG],[CRADNO])
                                             VALUES
-                                            ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}')
+                                            ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}')
 
-                                            ", row["DOC_NBR"].ToString(), row["TASK_STATUS"].ToString(), row["TASK_RESULT"].ToString(), row["GROUP_CODE"].ToString(), row["APPLICANT"].ToString(), row["APPLICANTGUID"].ToString(), row["APPLICANTCOMP"].ToString(), row["APPLICANTDEPT"].ToString(), row["APPLICANTDATE"].ToString(), row["LEAEMP"].ToString(), row["LEAAGENT"].ToString(), row["LEACODE"].ToString(), row["LEACODENAME"].ToString(), row["SP_DATE"].ToString(), row["SP_NAME"].ToString(), row["STARTTIME"].ToString(), row["ENDTIME"].ToString(), row["LEAHOURS"].ToString(), row["LEADAYS"].ToString(), row["REMARK"].ToString(), row["CANCEL_DOC_NBR"].ToString(), row["CANCEL_STATUS"].ToString(), row["SCSHR"].ToString(), row["SCSHRMSG"].ToString());
+                                            ", row["DOC_NBR"].ToString(), row["TASK_STATUS"].ToString(), row["TASK_RESULT"].ToString(), row["GROUP_CODE"].ToString(), row["APPLICANT"].ToString(), row["APPLICANTGUID"].ToString(), row["APPLICANTCOMP"].ToString(), row["APPLICANTDEPT"].ToString(), row["APPLICANTDATE"].ToString(), row["LEAEMP"].ToString(), row["LEAAGENT"].ToString(), row["LEACODE"].ToString(), row["LEACODENAME"].ToString(), row["SP_DATE"].ToString(), row["SP_NAME"].ToString(), row["STARTTIME"].ToString(), row["ENDTIME"].ToString(), row["LEAHOURS"].ToString(), row["LEADAYS"].ToString(), row["REMARK"].ToString(), row["CANCEL_DOC_NBR"].ToString(), row["CANCEL_STATUS"].ToString(), row["SCSHR"].ToString(), row["SCSHRMSG"].ToString(), row["CardNo"].ToString());
                     }
 
                     sbSql.AppendFormat(@"   ");
@@ -168,11 +197,13 @@ namespace TKSG
                                     ,[CANCEL_STATUS]
                                     ,[SCSHR]
                                     ,[SCSHRMSG]
+                                    ,[CardNo]
                                     FROM [192.168.1.223].[{0}].[dbo].[Z_SCSHR_LEAVE]
+                                    LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [APPLICANT]=[EmployeeID] COLLATE Chinese_PRC_CI_AS
                                     WHERE [DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN NOT IN (SELECT [DOC_NBR] FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]) 
                                     
 
-                                    ",DB);
+                                    ", DB);
 
                 adapter1 = new SqlDataAdapter(@"" + sbSql, sqlConn);
 
@@ -206,13 +237,114 @@ namespace TKSG
            
         }
 
+        public void SEARCHHREngFrm001B(string CARDNO)
+        {
+
+            try
+            {
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sbSql.Clear();
+                sbSqlQuery.Clear();
+
+                StringBuilder query = new StringBuilder();
+
+                if (string.IsNullOrEmpty(CARDNO))
+                {
+                    sbSql.AppendFormat(@"  SELECT ");
+                    sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
+                    sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
+                    sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
+                    sbSql.AppendFormat(@"  WHERE ISNULL([HREngFrm001SN],'')<>''");
+                    sbSql.AppendFormat(@"  AND [HREngFrm001OutDate]='{0}' ", DateTime.Now.ToString("yyyy/MM/dd"));
+                    sbSql.AppendFormat(@"  ORDER BY [HREngFrm001User],[HREngFrm001DefOutTime]");
+
+                    sbSql.AppendFormat(@"  
+
+                                        ");
+                }
+                else
+                {
+                    sbSql.AppendFormat(@"  SELECT ");
+                    sbSql.AppendFormat(@"  [HREngFrm001User] AS '申請人',[HREngFrm001Rank] AS '職級',[HREngFrm001OutDate] AS '外出日期',[HREngFrm001Transp] AS '交通工具',[HREngFrm001LicPlate] AS '車牌',[HREngFrm001DefOutTime] AS '預計外出時間',[HREngFrm001OutTime] AS '實際外出時間',[HREngFrm001DefBakTime] AS '預計返廠時間',[HREngFrm001BakTime] AS '實際返廠時間'");
+                    sbSql.AppendFormat(@"  ,[TaskId] AS 'TaskId',[HREngFrm001SN] AS '表單編號',[HREngFrm001Date] AS '申請日期',[HREngFrm001UsrDpt] AS '部門',[HREngFrm001Location] AS '外出地點',[HREngFrm001Agent] AS '代理人',[HREngFrm001Cause] AS '外出原因',[HREngFrm001FF] AS '是否由公司出發',[HREngFrm001CH] AS '是否回廠',[CRADNO] AS '卡號'");
+                    sbSql.AppendFormat(@"  FROM [TKGAFFAIRS].[dbo].[HREngFrm001]");
+                    sbSql.AppendFormat(@"  WHERE ISNULL([HREngFrm001SN],'')<>''");
+                    sbSql.AppendFormat(@"  AND  [HREngFrm001OutDate]='{0}' AND [CRADNO]='{1}' ", DateTime.Now.ToString("yyyy/MM/dd"), CARDNO);
+                    sbSql.AppendFormat(@"  ORDER BY [HREngFrm001DefOutTime]");
+
+                    sbSql.AppendFormat(@"  
+
+                                        ");
+                }
+
+               
+                sbSql.AppendFormat(@"  ");
+                sbSql.AppendFormat(@"  ");
+
+                adapter2 = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                sqlCmdBuilder2 = new SqlCommandBuilder(adapter2);
+                sqlConn.Open();
+                ds2.Clear();
+                adapter2.Fill(ds2, "ds2");
+                sqlConn.Close();
+
+
+                if (ds2.Tables["ds2"].Rows.Count == 0)
+                {
+                    dataGridView1.DataSource = null;
+
+                }
+                else
+                {
+                    if (ds2.Tables["ds2"].Rows.Count >= 1)
+                    {
+                        dataGridView1.DataSource = ds2.Tables["ds2"];
+                        dataGridView1.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 10);
+
+                        dataGridView1.AutoResizeColumns();
+
+                        for (int i = 0; i < dataGridView1.Rows.Count; i++)
+                        {
+                            DataGridViewRow row = dataGridView1.Rows[i];
+                            row.Height = 60;
+                        }
+
+
+
+                    }
+
+                }
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+        }
+
+
         #endregion
 
         #region BUTTON
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             ADDZ_SCSHR_LEAVE();
         }
+
         #endregion
+
+      
     }
 }
