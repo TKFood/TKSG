@@ -143,7 +143,7 @@ namespace TKSG
                     {
                         tran.Commit();      //執行交易  
 
-                        MessageBox.Show("完成");
+                        //MessageBox.Show("完成");
                     }
                 }
                 catch
@@ -467,11 +467,10 @@ namespace TKSG
                 {
                     if (ds.Tables["TEMPds1"].Rows.Count >= 1)
                     {
-                        string NAME = ds.Tables["TEMPds1"].Rows[0]["NAME"].ToString();
+                        string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
-                        INSERTHREngFrm001HREngFrm001OutTime(TaskId, HREngFrm001User, "實際外出時間");
-                        INSERTUOFHREngFrm001HREngFrm001OutTime(TaskId);
-                        
+                        ADDTB_EIP_DUTY_TEMP(CRADNO,"127.0.0.1");
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -561,10 +560,11 @@ namespace TKSG
                 {
                     if (ds.Tables["TEMPds1"].Rows.Count >= 1)
                     {
-                        string NAME = ds.Tables["TEMPds1"].Rows[0]["NAME"].ToString();
+                        string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
-                        INSERTHREngFrm001HREngFrm001BakTime(TaskId, HREngFrm001User, "實際回廠時間");
-                     
+                        ADDTB_EIP_DUTY_TEMP(CRADNO, "127.0.0.1");
+
                         SEARCHHREngFrm001B(CARDNO);
 
                         MessageBox.Show("實際回廠時間: " + DateTime.Now.ToString("HH:mm") + " " + NAME);
@@ -633,11 +633,14 @@ namespace TKSG
                             foreach (DataRow dr in ds.Tables["ds"].Rows)
                             {
                                 if (dr["CardNo"].ToString().Trim().Equals(textBox1.Text.Trim()))
-                                {
-                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CardNo"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
+                                {                                    
+                                    string NAME = dr["NAME"].ToString().Trim();
+                                    string CRADNO = dr["CardNo"].ToString().Trim();
+
+                                    ADDTB_EIP_DUTY_TEMP(CRADNO, "127.0.0.1");
 
                                     STATUS1 = "Y";
-                                    MessageBox.Show("白名單人員" + textBox1.Text.Trim());
+                                    MessageBox.Show("白名單人員:" + textBox1.Text.Trim()+" "+ NAME);
                                     //MessageBox.Show(textBox1.Text);
                                 }
                             }
@@ -702,10 +705,13 @@ namespace TKSG
                             {
                                 if (dr["CardNo"].ToString().Trim().Equals(textBox2.Text.Trim()))
                                 {
-                                    ADDTOHREngFrm001(dr["ID"].ToString().Trim(), dr["CardNo"].ToString().Trim(), dr["NAME"].ToString().Trim(), MODIFYCASUE);
+                                    string NAME = dr["NAME"].ToString().Trim();
+                                    string CRADNO = dr["CardNo"].ToString().Trim();
+
+                                    ADDTB_EIP_DUTY_TEMP(CRADNO, "127.0.0.1");
 
                                     STATUS2 = "Y";
-                                    MessageBox.Show("白名單人員" + textBox2.Text.Trim());
+                                    MessageBox.Show("白名單人員:" + textBox2.Text.Trim() + " " + NAME);
                                 }
                             }
                         }
@@ -824,6 +830,57 @@ namespace TKSG
             finally
             {
 
+            }
+        }
+
+        public void ADDTB_EIP_DUTY_TEMP(string CARD_NO, string IP_ADDRESS)
+        {
+            try
+            {
+
+                connectionString = connectionStringUOF;
+                sqlConn = new SqlConnection(connectionString);
+
+                sqlConn.Close();
+                sqlConn.Open();
+                tran = sqlConn.BeginTransaction();
+
+                sbSql.Clear();
+                              
+                sbSql.AppendFormat(@" 
+                                    INSERT INTO [UOFTEST].[dbo].[TB_EIP_DUTY_TEMP]
+                                    (
+                                    [PUNCH_TEMP_ID],[CARD_NO],[PUNCH_TIME],[TYPE],[CREATE_TIME],[IP_ADDRESS],[CLOCK_CODE]
+                                    )
+                                    VALUES (NEWID(),'{0}',GETDATE(),'',GETDATE(),'{1}','')
+
+                                    ", CARD_NO, IP_ADDRESS);
+
+                cmd.Connection = sqlConn;
+                cmd.CommandTimeout = 60;
+                cmd.CommandText = sbSql.ToString();
+                cmd.Transaction = tran;
+                result = cmd.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+                    tran.Rollback();    //交易取消
+                }
+                else
+                {
+                    tran.Commit();      //執行交易  
+
+
+                }
+            }
+            catch
+            {
+
+            }
+
+            finally
+            {
+                sqlConn.Close();
             }
         }
         #endregion
