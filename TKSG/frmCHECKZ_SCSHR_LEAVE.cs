@@ -29,6 +29,7 @@ namespace TKSG
         String connectionStringUOF = "server=192.168.1.223;database=UOF;uid=TKUOF;pwd=TKUOF123456";
 
         string DB = "UOFTEST";
+        string IP = "192.168.1.239";
 
         SqlConnection sqlConn = new SqlConnection();
         SqlCommand sqlComm = new SqlCommand();
@@ -470,7 +471,7 @@ namespace TKSG
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO,"127.0.0.1");
+                        ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -563,7 +564,7 @@ namespace TKSG
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO, "127.0.0.1");
+                        ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -637,7 +638,7 @@ namespace TKSG
                                     string NAME = dr["NAME"].ToString().Trim();
                                     string CRADNO = dr["CardNo"].ToString().Trim();
 
-                                    ADDTB_EIP_DUTY_TEMP(CRADNO, "127.0.0.1");
+                                    ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
 
                                     STATUS1 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox1.Text.Trim()+" "+ NAME);
@@ -708,7 +709,7 @@ namespace TKSG
                                     string NAME = dr["NAME"].ToString().Trim();
                                     string CRADNO = dr["CardNo"].ToString().Trim();
 
-                                    ADDTB_EIP_DUTY_TEMP(CRADNO, "127.0.0.1");
+                                    ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
 
                                     STATUS2 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox2.Text.Trim() + " " + NAME);
