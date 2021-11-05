@@ -205,7 +205,8 @@ namespace TKSG
                                     ,[Name]
                                     FROM [192.168.1.223].[{0}].[dbo].[Z_SCSHR_LEAVE]
                                     LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [APPLICANT]=[EmployeeID] COLLATE Chinese_PRC_CI_AS
-                                    WHERE [DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN NOT IN (SELECT [DOC_NBR] FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]) 
+                                    WHERE TASK_RESULT='0'
+                                    AND [DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN NOT IN (SELECT [DOC_NBR] FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]) 
                                     
 
                                     ", DB);
@@ -471,7 +472,7 @@ namespace TKSG
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
+                        ADDTB_EIP_DUTY_TEMP(CRADNO,"Off", IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -564,7 +565,7 @@ namespace TKSG
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
+                        ADDTB_EIP_DUTY_TEMP(CRADNO,"Work", IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -638,7 +639,7 @@ namespace TKSG
                                     string NAME = dr["NAME"].ToString().Trim();
                                     string CRADNO = dr["CardNo"].ToString().Trim();
 
-                                    ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
+                                    ADDTB_EIP_DUTY_TEMP(CRADNO,"Off", IP);
 
                                     STATUS1 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox1.Text.Trim()+" "+ NAME);
@@ -709,7 +710,7 @@ namespace TKSG
                                     string NAME = dr["NAME"].ToString().Trim();
                                     string CRADNO = dr["CardNo"].ToString().Trim();
 
-                                    ADDTB_EIP_DUTY_TEMP(CRADNO, IP);
+                                    ADDTB_EIP_DUTY_TEMP(CRADNO,"Work", IP);
 
                                     STATUS2 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox2.Text.Trim() + " " + NAME);
@@ -834,7 +835,7 @@ namespace TKSG
             }
         }
 
-        public void ADDTB_EIP_DUTY_TEMP(string CARD_NO, string IP_ADDRESS)
+        public void ADDTB_EIP_DUTY_TEMP(string CARD_NO,string TYPE, string IP_ADDRESS)
         {
             try
             {
@@ -853,9 +854,9 @@ namespace TKSG
                                     (
                                     [PUNCH_TEMP_ID],[CARD_NO],[PUNCH_TIME],[TYPE],[CREATE_TIME],[IP_ADDRESS],[CLOCK_CODE]
                                     )
-                                    VALUES (NEWID(),'{0}',GETDATE(),'',GETDATE(),'{1}','')
+                                    VALUES (NEWID(),'{0}',GETDATE(),'{1}',GETDATE(),'{2}','')
 
-                                    ", CARD_NO, IP_ADDRESS);
+                                    ", CARD_NO, TYPE, IP_ADDRESS);
 
                 cmd.Connection = sqlConn;
                 cmd.CommandTimeout = 60;
