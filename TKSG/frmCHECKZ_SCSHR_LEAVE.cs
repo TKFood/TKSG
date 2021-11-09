@@ -645,6 +645,8 @@ namespace TKSG
 
                                     STATUS1 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox1.Text.Trim()+" "+ NAME);
+
+                                    textBox1.Text = null;
                                     //MessageBox.Show(textBox1.Text);
                                 }
                             }
@@ -665,6 +667,7 @@ namespace TKSG
                 if (STATUS1.Equals("N"))
                 {
                     MessageBox.Show("查無資料");
+                    textBox1.Text = null;
                 }
             }
             else if (!string.IsNullOrEmpty(textBox2.Text))
@@ -716,6 +719,7 @@ namespace TKSG
 
                                     STATUS2 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox2.Text.Trim() + " " + NAME);
+                                    textBox2.Text = null;
                                 }
                             }
                         }
@@ -735,6 +739,7 @@ namespace TKSG
                 if (STATUS2.Equals("N"))
                 {
                     MessageBox.Show("查無資料");
+                    textBox1.Text = null;
                 }
             }
         }
@@ -887,6 +892,227 @@ namespace TKSG
                 sqlConn.Close();
             }
         }
+
+        private void textBox3_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (!string.IsNullOrEmpty(textBox3.Text.Trim()))
+                {
+                    SEARCHHREngFrm001textBox3(textBox3.Text.Trim());
+                }
+            }
+        }
+
+        private void textBox4_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+
+                if (!string.IsNullOrEmpty(textBox4.Text.Trim()))
+                {
+                    SEARCHHREngFrm001textBox4(textBox4.Text.Trim());
+                }
+            }
+        }
+
+        public void SEARCHHREngFrm001textBox3(string CARDNO)
+        {
+            DataSet ds = new DataSet();
+
+            try
+            {
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sbSql.Clear();
+                sbSqlQuery.Clear();
+
+                StringBuilder query = new StringBuilder();
+
+                sbSql.AppendFormat(@"  
+                                    SELECT 
+                                    [NAME] AS '申請人'
+                                    ,[CRADNO] AS '卡號'
+                                    ,[DOC_NBR]  AS '表單編號'
+                                    ,[STARTTIME]  AS '預計外出時間'
+                                    ,[ENDTIME] AS '預計返廠時間'
+                                    ,[TASK_STATUS]
+                                    ,[TASK_RESULT]
+                                    ,[GROUP_CODE]
+                                    ,[APPLICANT]
+                                    ,[APPLICANTGUID]
+                                    ,[APPLICANTCOMP]
+                                    ,[APPLICANTDEPT]
+                                    ,[APPLICANTDATE]
+                                    ,[LEAEMP]
+                                    ,[LEAAGENT]
+                                    ,[LEACODE]
+                                    ,[LEACODENAME]
+                                    ,[SP_DATE]
+                                    ,[SP_NAME]
+                                    ,[LEAHOURS]
+                                    ,[LEADAYS]
+                                    ,[REMARK]
+                                    ,[CANCEL_DOC_NBR]
+                                    ,[CANCEL_STATUS]
+                                    ,[SCSHR]
+                                    ,[SCSHRMSG]
+                                    FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
+                                    WHERE [LEACODE] NOT IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
+                                    AND [CRADNO]='{1}'
+                                     ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
+
+                adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                sqlCmdBuilder = new SqlCommandBuilder(adapter);
+                sqlConn.Open();
+                ds.Clear();
+                adapter.Fill(ds, "TEMPds1");
+                sqlConn.Close();
+
+
+                if (ds.Tables["TEMPds1"].Rows.Count == 0)
+                {
+                    ////dataGridView1.DataSource = null;
+
+                    //string CRADNO = textBox1.Text.Trim();
+
+                    //CHECKWHITELIST("離開公司");
+
+                    //SEARCHHREngFrm001C(CRADNO);
+
+                    MessageBox.Show("查無資料");
+                    textBox3.Text = null;
+                }
+                else
+                {
+                    if (ds.Tables["TEMPds1"].Rows.Count >= 1)
+                    {
+                        string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+
+                        ADDTB_EIP_DUTY_TEMP(CRADNO, "Off", IP);
+
+                        SEARCHHREngFrm001B(CARDNO);
+
+                        MessageBox.Show("實際外出時間: " + DateTime.Now.ToString("HH:mm") + " " + NAME);
+
+                        textBox3.Text = null;
+
+                    }
+
+                }
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+        }
+
+        public void SEARCHHREngFrm001textBox4(string CARDNO)
+        {
+            DataSet ds = new DataSet();
+            try
+            {
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sbSql.Clear();
+                sbSqlQuery.Clear();
+
+                StringBuilder query = new StringBuilder();
+                sbSql.AppendFormat(@"  
+                                    SELECT 
+                                    [NAME] AS '申請人'
+                                    ,[CRADNO] AS '卡號'
+                                    ,[DOC_NBR]  AS '表單編號'
+                                    ,[STARTTIME]  AS '預計外出時間'
+                                    ,[ENDTIME] AS '預計返廠時間'
+                                    ,[TASK_STATUS]
+                                    ,[TASK_RESULT]
+                                    ,[GROUP_CODE]
+                                    ,[APPLICANT]
+                                    ,[APPLICANTGUID]
+                                    ,[APPLICANTCOMP]
+                                    ,[APPLICANTDEPT]
+                                    ,[APPLICANTDATE]
+                                    ,[LEAEMP]
+                                    ,[LEAAGENT]
+                                    ,[LEACODE]
+                                    ,[LEACODENAME]
+                                    ,[SP_DATE]
+                                    ,[SP_NAME]
+                                    ,[LEAHOURS]
+                                    ,[LEADAYS]
+                                    ,[REMARK]
+                                    ,[CANCEL_DOC_NBR]
+                                    ,[CANCEL_STATUS]
+                                    ,[SCSHR]
+                                    ,[SCSHRMSG]
+                                    FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
+                                    WHERE [LEACODE] NOT IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
+                                    AND [CRADNO]='{1}'
+                                     ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
+
+                adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
+
+                sqlCmdBuilder = new SqlCommandBuilder(adapter);
+                sqlConn.Open();
+                ds.Clear();
+                adapter.Fill(ds, "TEMPds1");
+                sqlConn.Close();
+
+
+                if (ds.Tables["TEMPds1"].Rows.Count == 0)
+                {
+                    ////dataGridView1.DataSource = null;
+                    //CARDNO = textBox2.Text.Trim();
+
+                    //CHECKWHITELIST("返回公司");
+
+                    //SEARCHHREngFrm001C(CARDNO);
+
+                    MessageBox.Show("查無資料");
+                    textBox4.Text = null;
+                }
+                else
+                {
+                    if (ds.Tables["TEMPds1"].Rows.Count >= 1)
+                    {
+                        string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+
+                        ADDTB_EIP_DUTY_TEMP(CRADNO, "Work", IP);
+
+                        SEARCHHREngFrm001B(CARDNO);
+
+                        MessageBox.Show("實際回廠時間: " + DateTime.Now.ToString("HH:mm") + " " + NAME);
+
+                        textBox4.Text = null;
+
+                    }
+
+                }
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+        }
+
         #endregion
 
         #region BUTTON
@@ -901,8 +1127,9 @@ namespace TKSG
         }
 
 
+
         #endregion
 
-       
+
     }
 }
