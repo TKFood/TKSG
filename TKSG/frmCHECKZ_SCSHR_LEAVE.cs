@@ -260,7 +260,8 @@ namespace TKSG
                 {    
                     sbSql.AppendFormat(@"  
                                         SELECT 
-                                        [NAME] AS '申請人'
+                                         [LEACODENAME]
+                                         ,[NAME] AS '申請人'
                                         ,[CRADNO] AS '卡號'
                                         ,[DOC_NBR]  AS '表單編號'
                                         ,[STARTTIME]  AS '預計外出時間'
@@ -275,7 +276,7 @@ namespace TKSG
                                         ,[APPLICANTDATE]
                                         ,[LEAEMP]
                                         ,[LEAAGENT]
-                                        ,[LEACODE]
+                                        
                                         ,[LEACODENAME]
                                         ,[SP_DATE]
                                         ,[SP_NAME]
@@ -289,13 +290,14 @@ namespace TKSG
                                         FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
                                         WHERE CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
 
-                                        ",DateTime.Now.ToString("yyyyMMdd"));
+                                        ", DateTime.Now.ToString("yyyyMMdd"));
                 }
                 else
                 {
                     sbSql.AppendFormat(@"  
                                         SELECT 
-                                        [NAME] AS '申請人'
+                                        [LEACODENAME]
+                                        ,[NAME] AS '申請人'                                      
                                         ,[CRADNO] AS '卡號'
                                         ,[DOC_NBR]  AS '表單編號'
                                         ,[STARTTIME]  AS '預計外出時間'
@@ -311,7 +313,7 @@ namespace TKSG
                                         ,[LEAEMP]
                                         ,[LEAAGENT]
                                         ,[LEACODE]
-                                        ,[LEACODENAME]
+                                       
                                         ,[SP_DATE]
                                         ,[SP_NAME]
                                         ,[LEAHOURS]
@@ -415,7 +417,8 @@ namespace TKSG
                 
                 sbSql.AppendFormat(@"  
                                     SELECT 
-                                    [NAME] AS '申請人'
+                                    [LEACODENAME]
+                                    ,[NAME] AS '申請人'
                                     ,[CRADNO] AS '卡號'
                                     ,[DOC_NBR]  AS '表單編號'
                                     ,[STARTTIME]  AS '預計外出時間'
@@ -431,7 +434,7 @@ namespace TKSG
                                     ,[LEAEMP]
                                     ,[LEAAGENT]
                                     ,[LEACODE]
-                                    ,[LEACODENAME]
+                                    
                                     ,[SP_DATE]
                                     ,[SP_NAME]
                                     ,[LEAHOURS]
@@ -510,7 +513,8 @@ namespace TKSG
                 StringBuilder query = new StringBuilder();
                 sbSql.AppendFormat(@"  
                                     SELECT 
-                                    [NAME] AS '申請人'
+                                    [LEACODENAME]
+                                    ,[NAME] AS '申請人'
                                     ,[CRADNO] AS '卡號'
                                     ,[DOC_NBR]  AS '表單編號'
                                     ,[STARTTIME]  AS '預計外出時間'
@@ -526,7 +530,7 @@ namespace TKSG
                                     ,[LEAEMP]
                                     ,[LEAAGENT]
                                     ,[LEACODE]
-                                    ,[LEACODENAME]
+                                    
                                     ,[SP_DATE]
                                     ,[SP_NAME]
                                     ,[LEAHOURS]
@@ -761,7 +765,8 @@ namespace TKSG
                 {
                     sbSql.AppendFormat(@"  
                                         SELECT 
-                                        [NAME] AS '申請人'
+                                         [LEACODENAME]
+                                        ,[NAME] AS '申請人'
                                         ,[CRADNO] AS '卡號'
                                         ,[DOC_NBR]  AS '表單編號'
                                         ,[STARTTIME]  AS '預計外出時間'
@@ -777,7 +782,7 @@ namespace TKSG
                                         ,[LEAEMP]
                                         ,[LEAAGENT]
                                         ,[LEACODE]
-                                        ,[LEACODENAME]
+                                       
                                         ,[SP_DATE]
                                         ,[SP_NAME]
                                         ,[LEAHOURS]
@@ -932,7 +937,8 @@ namespace TKSG
 
                 sbSql.AppendFormat(@"  
                                     SELECT 
-                                    [NAME] AS '申請人'
+                                    [LEACODENAME]
+                                    ,[NAME] AS '申請人'
                                     ,[CRADNO] AS '卡號'
                                     ,[DOC_NBR]  AS '表單編號'
                                     ,[STARTTIME]  AS '預計外出時間'
@@ -948,7 +954,7 @@ namespace TKSG
                                     ,[LEAEMP]
                                     ,[LEAAGENT]
                                     ,[LEACODE]
-                                    ,[LEACODENAME]
+                                    
                                     ,[SP_DATE]
                                     ,[SP_NAME]
                                     ,[LEAHOURS]
@@ -1030,7 +1036,8 @@ namespace TKSG
                 StringBuilder query = new StringBuilder();
                 sbSql.AppendFormat(@"  
                                     SELECT 
-                                    [NAME] AS '申請人'
+                                     [LEACODENAME]
+                                    ,[NAME] AS '申請人'
                                     ,[CRADNO] AS '卡號'
                                     ,[DOC_NBR]  AS '表單編號'
                                     ,[STARTTIME]  AS '預計外出時間'
@@ -1046,7 +1053,7 @@ namespace TKSG
                                     ,[LEAEMP]
                                     ,[LEAAGENT]
                                     ,[LEACODE]
-                                    ,[LEACODENAME]
+                                    
                                     ,[SP_DATE]
                                     ,[SP_NAME]
                                     ,[LEAHOURS]
