@@ -442,7 +442,8 @@ namespace TKSG
                                     ,[SCSHR]
                                     ,[SCSHRMSG]
                                     FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
-                                    WHERE CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
+                                    WHERE [LEACODE] IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
                                     AND [CRADNO]='{1}'
                                      ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
 
@@ -536,7 +537,8 @@ namespace TKSG
                                     ,[SCSHR]
                                     ,[SCSHRMSG]
                                     FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
-                                    WHERE CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
+                                    WHERE [LEACODE] IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
                                     AND [CRADNO]='{1}'
                                      ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
 
