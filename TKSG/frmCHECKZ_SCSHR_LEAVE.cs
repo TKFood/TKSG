@@ -475,8 +475,9 @@ namespace TKSG
                     {
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+                        string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO,"Off", IP);
+                        ADDTB_EIP_DUTY_TEMP(APPLICANT, "Off", IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -570,8 +571,9 @@ namespace TKSG
                     {
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+                        string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO,"Work", IP);
+                        ADDTB_EIP_DUTY_TEMP(APPLICANT, "Work", IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -644,8 +646,9 @@ namespace TKSG
                                 {                                    
                                     string NAME = dr["NAME"].ToString().Trim();
                                     string CRADNO = dr["CardNo"].ToString().Trim();
+                                    string ID = dr["ID"].ToString().Trim();
 
-                                    ADDTB_EIP_DUTY_TEMP(CRADNO,"Off", IP);
+                                    ADDTB_EIP_DUTY_TEMP(ID, "Off", IP);
 
                                     STATUS1 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox1.Text.Trim()+" "+ NAME);
@@ -718,8 +721,9 @@ namespace TKSG
                                 {
                                     string NAME = dr["NAME"].ToString().Trim();
                                     string CRADNO = dr["CardNo"].ToString().Trim();
+                                    string ID = dr["ID"].ToString().Trim();
 
-                                    ADDTB_EIP_DUTY_TEMP(CRADNO,"Work", IP);
+                                    ADDTB_EIP_DUTY_TEMP(ID, "Work", IP);
 
                                     STATUS2 = "Y";
                                     MessageBox.Show("白名單人員:" + textBox2.Text.Trim() + " " + NAME);
@@ -998,8 +1002,9 @@ namespace TKSG
                     {
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+                        string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO, "Off", IP);
+                        ADDTB_EIP_DUTY_TEMP(APPLICANT, "Off", IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
@@ -1096,8 +1101,9 @@ namespace TKSG
                     {
                         string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
                         string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+                        string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(CRADNO, "Work", IP);
+                        ADDTB_EIP_DUTY_TEMP(APPLICANT, "Work", IP);
 
                         SEARCHHREngFrm001B(CARDNO);
 
