@@ -28,7 +28,7 @@ namespace TKSG
         String connectionStringTKGAFFAIRS = "server=192.168.1.105;database=TKGAFFAIRS;uid=sa;pwd=dsc";
         String connectionStringUOF = "server=192.168.1.223;database=UOF;uid=TKUOF;pwd=TKUOF123456";
 
-        string DB = "UOFTEST";
+        string DB = "UOF";
         string IP = "192.168.1.239";
 
         SqlConnection sqlConn = new SqlConnection();
@@ -866,7 +866,7 @@ namespace TKSG
                 sbSql.Clear();
                               
                 sbSql.AppendFormat(@" 
-                                    INSERT INTO [UOFTEST].[dbo].[TB_EIP_DUTY_TEMP]
+                                    INSERT INTO [UOF].[dbo].[TB_EIP_DUTY_TEMP]
                                     (
                                     [PUNCH_TEMP_ID],[CARD_NO],[PUNCH_TIME],[TYPE],[CREATE_TIME],[IP_ADDRESS],[CLOCK_CODE]
                                     )
