@@ -621,6 +621,7 @@ namespace TKSG
                                      SELECT [WHITELIST].[ID],[Person].[CardNo],[WHITELIST].[NAME] 
                                      FROM [TKGAFFAIRS].[dbo].[WHITELIST]
                                      LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [WHITELIST].ID=[Person].[UserID]
+                                     WHERE ISNULL([Person].[CardNo],'')<>''
                                     ");
 
 
@@ -696,6 +697,7 @@ namespace TKSG
                                          SELECT [WHITELIST].[ID],[Person].[CardNo],[WHITELIST].[NAME] 
                                          FROM [TKGAFFAIRS].[dbo].[WHITELIST]
                                          LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [WHITELIST].ID=[Person].[UserID]
+                                         WHERE ISNULL([Person].[CardNo],'')<>''
                                         ");
 
 
