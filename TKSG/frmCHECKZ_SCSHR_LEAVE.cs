@@ -196,7 +196,7 @@ namespace TKSG
                                     ,CONVERT(NVARCHAR,[ENDTIME],120) [ENDTIME] 
                                     ,[LEAHOURS]
                                     ,[LEADAYS]
-                                    ,[REMARK]
+                                    ,REPLACE(REPLACE(REPLACE([REMARK],'`','') ,'‵',''),'\', '') AS REMARK
                                     ,[CANCEL_DOC_NBR]
                                     ,[CANCEL_STATUS]
                                     ,[SCSHR]
@@ -208,7 +208,7 @@ namespace TKSG
                                     LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [APPLICANT]=[EmployeeID] COLLATE Chinese_PRC_CI_AS
                                     WHERE  (TASK_RESULT IN ('0') OR ISNULL(TASK_RESULT,'')='') 
                                     AND [DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN NOT IN (SELECT [DOC_NBR] FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]) 
-                                    
+                           
 
                                     ", DB);
 
