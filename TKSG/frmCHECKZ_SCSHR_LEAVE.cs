@@ -386,6 +386,9 @@ namespace TKSG
             {
                 if (!string.IsNullOrEmpty(textBox1.Text.Trim()))
                 {
+                    //log
+                    ADD_LOG_TB_EIP_DUTY_TEMP(textBox1.Text.Trim(), "離廠");
+
                     SEARCHHREngFrm001textBox1(textBox1.Text.Trim());
                 }
             }
@@ -398,6 +401,11 @@ namespace TKSG
 
                 if (!string.IsNullOrEmpty(textBox2.Text.Trim()))
                 {
+
+                    //log
+                    ADD_LOG_TB_EIP_DUTY_TEMP(textBox2.Text.Trim(), "回廠");
+
+
                     SEARCHHREngFrm001textBox2(textBox2.Text.Trim());
                 }
             }
@@ -911,6 +919,10 @@ namespace TKSG
             {
                 if (!string.IsNullOrEmpty(textBox3.Text.Trim()))
                 {
+
+                    //log
+                    ADD_LOG_TB_EIP_DUTY_TEMP(textBox3.Text.Trim(), "離廠");
+
                     SEARCHHREngFrm001textBox3(textBox3.Text.Trim());
                 }
             }
@@ -923,6 +935,9 @@ namespace TKSG
 
                 if (!string.IsNullOrEmpty(textBox4.Text.Trim()))
                 {
+                    //log
+                    ADD_LOG_TB_EIP_DUTY_TEMP(textBox4.Text.Trim(), "回廠");
+
                     SEARCHHREngFrm001textBox4(textBox4.Text.Trim());
                 }
             }
@@ -1126,6 +1141,56 @@ namespace TKSG
             finally
             {
 
+            }
+        }
+
+        public void ADD_LOG_TB_EIP_DUTY_TEMP(string CARD_NO,string TYPE)
+        {
+            try
+            {
+
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sqlConn.Close();
+                sqlConn.Open();
+                tran = sqlConn.BeginTransaction();
+
+                sbSql.Clear();
+
+                sbSql.AppendFormat(@" 
+                                   INSERT INTO [TKGAFFAIRS].[dbo].[LOG_TB_EIP_DUTY_TEMP]
+                                    ([CARD_NO],[TYPE])
+                                    VALUES
+                                    ('{0}','{1}')
+
+                                    ", CARD_NO, TYPE);
+
+                cmd.Connection = sqlConn;
+                cmd.CommandTimeout = 60;
+                cmd.CommandText = sbSql.ToString();
+                cmd.Transaction = tran;
+                result = cmd.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+                    tran.Rollback();    //交易取消
+                }
+                else
+                {
+                    tran.Commit();      //執行交易  
+
+
+                }
+            }
+            catch
+            {
+
+            }
+
+            finally
+            {
+                sqlConn.Close();
             }
         }
 
