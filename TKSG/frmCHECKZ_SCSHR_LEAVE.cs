@@ -67,7 +67,7 @@ namespace TKSG
             label6.Text = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
 
             timer1.Enabled = true;
-            timer1.Interval = 1000 * 30;
+            timer1.Interval = 1000 * 60;
             timer1.Start();
         }
 
@@ -149,7 +149,7 @@ namespace TKSG
                 }
                 catch
                 {
-
+                    PREPARE_MAIL();
                 }
 
                 finally
@@ -1194,6 +1194,153 @@ namespace TKSG
             }
         }
 
+        public void PREPARE_MAIL()
+        {
+            try
+            {
+                StringBuilder SUBJEST = new StringBuilder();
+                StringBuilder BODY = new StringBuilder();
+
+                ////加上附圖
+                //string path = System.Environment.CurrentDirectory+@"/Images/emaillogo.jpg";
+                //LinkedResource res = new LinkedResource(path);
+                //res.ContentId = Guid.NewGuid().ToString();
+
+                SUBJEST.Clear();
+                BODY.Clear();
+
+
+                SUBJEST.AppendFormat(@"系統通知-老楊食品-每日-有請假單未轉入刷卡資料 ，謝謝。 " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+
+
+                //交辨未完成的項目及交辨人回覆狀況
+                BODY.AppendFormat("<span style='font-size:12.0pt;font-family:微軟正黑體'> <br>" + "Dear SIR:" + "<br>"
+                    + "<br>" + "有請假單未轉入刷卡資料"
+
+                    );
+
+
+                //if (DSPROOFREAD.Tables[0].Rows.Count > 0)
+                //{
+                //    BODY.AppendFormat("<span style = 'font-size:12.0pt;font-family:微軟正黑體'><br>" + "明細");
+
+                //    BODY.AppendFormat(@"<table> ");
+                //    BODY.AppendFormat(@"<tr >");
+                //    BODY.AppendFormat(@"<th style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' width=10% "">交辨開始時間</th>");
+                //    BODY.AppendFormat(@"<th style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' width=40% "">交辨項目</th>");
+                //    BODY.AppendFormat(@"<th style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' width=40% "">交辨回覆</th>");
+                //    BODY.AppendFormat(@"<th style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' width=10% "">被交辨人</th>");
+                //    BODY.AppendFormat(@"<th style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' width=10% "">交辨狀態</th>");
+                //    BODY.AppendFormat(@"<th style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' width=10% "">回覆時間</th>");
+
+                //    BODY.AppendFormat(@"</tr> ");
+
+                //    foreach (DataRow DR in DSPROOFREAD.Tables[0].Rows)
+                //    {
+
+                //        BODY.AppendFormat(@"<tr >");
+                //        BODY.AppendFormat(@"<td style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' "">" + DR["交辨開始時間"].ToString() + "</td>");
+                //        BODY.AppendFormat(@"<td style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體'  width=40% "">" + DR["交辨項目"].ToString() + "</td>");
+                //        BODY.AppendFormat(@"<td style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體'  width=30% "">" + DR["交辨回覆"].ToString() + "</td>");
+                //        BODY.AppendFormat(@"<td style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' "">" + DR["被交辨人"].ToString() + "</td>");
+                //        BODY.AppendFormat(@"<td style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' "">" + DR["交辨狀態"].ToString() + "</td>");
+                //        BODY.AppendFormat(@"<td style=""border: 1px solid #999;font-size:12.0pt;font-family:微軟正黑體' "">" + DR["回覆時間"].ToString() + "</td>");
+
+
+                //        BODY.AppendFormat(@"</tr> ");
+
+                //        //BODY.AppendFormat("<span></span>");
+                //        //BODY.AppendFormat("<span style = 'font-size:12.0pt;font-family:微軟正黑體' > <br> " + "品名     " + DR["TD005"].ToString() + "</span>");
+                //        //BODY.AppendFormat("<span style = 'font-size:12.0pt;font-family:微軟正黑體' > <br>" + "採購數量 " + DR["TD008"].ToString() + "</span>");
+                //        //BODY.AppendFormat("<span style = 'font-size:12.0pt;font-family:微軟正黑體' > <br>" + "採購單位 " + DR["TD009"].ToString() + "</span>");
+                //        //BODY.AppendFormat("<span style = 'font-size:12.0pt;font-family:微軟正黑體' > <br>");
+                //    }
+                //    BODY.AppendFormat(@"</table> ");
+                //}
+                //else
+                //{
+                //    BODY.AppendFormat("<span style = 'font-size:12.0pt;font-family:微軟正黑體'><br>" + "無資料");
+                //}
+                              
+
+
+                BODY.AppendFormat(" "
+                             + "<br>" + "謝謝"
+
+                             + "</span><br>");
+
+
+
+                SENDEMAILUOFPROOFEAD(SUBJEST, BODY);
+
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+        }
+        /// <summary>
+        /// 實際寄出
+        /// </summary>
+        public void SENDEMAILUOFPROOFEAD(StringBuilder Subject, StringBuilder Body)
+        {
+            try
+            {
+                string MySMTPCONFIG = "officemail.cloudmax.com.tw";
+                string NAME = "tkpublic@tkfood.com.tw";
+                string PW = "@@tkmail629";
+
+                System.Net.Mail.MailMessage MyMail = new System.Net.Mail.MailMessage();
+                MyMail.From = new System.Net.Mail.MailAddress("tk290@tkfood.com.tw");
+
+                //MyMail.Bcc.Add("密件副本的收件者Mail"); //加入密件副本的Mail          
+                //MyMail.Subject = "每日訂單-製令追踨表"+DateTime.Now.ToString("yyyy/MM/dd");
+                MyMail.Subject = Subject.ToString();
+                //MyMail.Body = "<h1>Dear SIR</h1>" + Environment.NewLine + "<h1>附件為每日訂單-製令追踨表，請查收</h1>" + Environment.NewLine + "<h1>若訂單沒有相對的製令則需通知製造生管開立</h1>"; //設定信件內容
+                MyMail.Body = Body.ToString();
+                MyMail.IsBodyHtml = true; //是否使用html格式
+
+                //加上附圖
+                //string path = System.Environment.CurrentDirectory + @"/Images/emaillogo.jpg";
+                //MyMail.AlternateViews.Add(GetEmbeddedImage(path, Body));
+
+                System.Net.Mail.SmtpClient MySMTP = new System.Net.Mail.SmtpClient(MySMTPCONFIG, 25);
+                MySMTP.Credentials = new System.Net.NetworkCredential(NAME, PW);
+
+
+                try
+                {
+                    //MyMail.To.Add(DR["MAIL"].ToString()); //設定收件者Email，多筆mail
+                    MyMail.To.Add("tk290@tkfood.com.tw"); //設定收件者Email
+                    MySMTP.Send(MyMail);
+
+                    MyMail.Dispose(); //釋放資源
+
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("有錯誤");
+
+                    //ADDLOG(DateTime.Now, Subject.ToString(), ex.ToString());
+                    //ex.ToString();
+                }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+
+            }
+
+
+        }
         #endregion
 
         #region BUTTON
