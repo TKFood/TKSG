@@ -175,6 +175,10 @@ namespace TKSG
 
                 StringBuilder query = new StringBuilder();
 
+                //TASK_RESULT IN ('0') 核準
+                //ISNULL(TASK_RESULT,'')='' 啟單
+                // AND (TASK_RESULT IN ('0') OR ISNULL(TASK_RESULT,'')='') 
+
                 sbSql.AppendFormat(@" 
                                     SELECT  
                                     [DOC_NBR]
@@ -206,7 +210,8 @@ namespace TKSG
                                     FROM [192.168.1.223].[{0}].[dbo].[Z_SCSHR_LEAVE]
                                     LEFT JOIN [192.168.1.223].[UOF].[dbo].[TB_EB_USER] ON [TB_EB_USER].[USER_GUID]=[Z_SCSHR_LEAVE].[LEAEMP]
                                     LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [APPLICANT]=[EmployeeID] COLLATE Chinese_PRC_CI_AS
-                                    WHERE  (TASK_RESULT IN ('0') OR ISNULL(TASK_RESULT,'')='') 
+                                    WHERE  1=1
+                                    AND (TASK_RESULT IN ('0')) 
                                     AND [DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN NOT IN (SELECT [DOC_NBR] FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]) 
                            
 
