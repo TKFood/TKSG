@@ -211,7 +211,7 @@ namespace TKSG
                                     LEFT JOIN [192.168.1.223].[UOF].[dbo].[TB_EB_USER] ON [TB_EB_USER].[USER_GUID]=[Z_SCSHR_LEAVE].[LEAEMP]
                                     LEFT JOIN [192.168.1.225].[CHIYU].[dbo].[Person] ON [APPLICANT]=[EmployeeID] COLLATE Chinese_PRC_CI_AS
                                     WHERE  1=1
-                                    AND (TASK_RESULT IN ('0')) 
+                                    AND (TASK_RESULT IN ('0') OR ISNULL(TASK_RESULT,'')='') 
                                     AND [DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN NOT IN (SELECT [DOC_NBR] FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]) 
                            
 
@@ -487,17 +487,30 @@ namespace TKSG
                 {
                     if (ds.Tables["TEMPds1"].Rows.Count >= 1)
                     {
-                        string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
-                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
-                        string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
+                        //檢查是否已核單，核過才能出門
+                        //TASK_RESULT=0
+                        string TASK_RESULT = ds.Tables["TEMPds1"].Rows[0]["TASK_RESULT"].ToString();
+                        
+                        if(TASK_RESULT.Equals("0"))
+                        {
+                            string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                            string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+                            string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(APPLICANT, "Off", IP);
+                            ADDTB_EIP_DUTY_TEMP(APPLICANT, "Off", IP);
 
-                        SEARCHHREngFrm001B(CARDNO);
+                            SEARCHHREngFrm001B(CARDNO);
 
-                        MessageBox.Show("實際外出時間: " +DateTime.Now.ToString("HH:mm")  + " " + NAME);
+                            MessageBox.Show("實際外出時間: " + DateTime.Now.ToString("HH:mm") + " " + NAME);
 
-                        textBox1.Text = null;
+                            textBox1.Text = null;
+                        }
+                        else
+                        {
+
+                            MessageBox.Show("主管未核準，不允許離廠");
+                        }
+                       
 
                     }
 
@@ -1023,17 +1036,29 @@ namespace TKSG
                 {
                     if (ds.Tables["TEMPds1"].Rows.Count >= 1)
                     {
-                        string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
-                        string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
-                        string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
+                        //檢查是否已核單，核過才能出門
+                        //TASK_RESULT=0
+                        string TASK_RESULT = ds.Tables["TEMPds1"].Rows[0]["TASK_RESULT"].ToString();
 
-                        ADDTB_EIP_DUTY_TEMP(APPLICANT, "Off", IP);
+                        if (TASK_RESULT.Equals("0"))
+                        {
+                            string NAME = ds.Tables["TEMPds1"].Rows[0]["申請人"].ToString();
+                            string CRADNO = ds.Tables["TEMPds1"].Rows[0]["卡號"].ToString();
+                            string APPLICANT = ds.Tables["TEMPds1"].Rows[0]["APPLICANT"].ToString();
 
-                        SEARCHHREngFrm001B(CARDNO);
+                            ADDTB_EIP_DUTY_TEMP(APPLICANT, "Off", IP);
 
-                        MessageBox.Show("實際外出時間: " + DateTime.Now.ToString("HH:mm") + " " + NAME);
+                            SEARCHHREngFrm001B(CARDNO);
 
-                        textBox3.Text = null;
+                            MessageBox.Show("實際外出時間: " + DateTime.Now.ToString("HH:mm") + " " + NAME);
+
+                            textBox3.Text = null;
+                        }
+                        else
+                        {
+
+                            MessageBox.Show("主管未核準，不允許離廠");
+                        }
 
                     }
 
