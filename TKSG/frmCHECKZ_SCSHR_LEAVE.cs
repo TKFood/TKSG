@@ -154,7 +154,7 @@ namespace TKSG
 
                 finally
                 {
-                    sqlConn.Close();
+                    sqlConn.Close(); 
                 }
             }
 
