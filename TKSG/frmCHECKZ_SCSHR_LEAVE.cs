@@ -158,6 +158,9 @@ namespace TKSG
                 }
             }
 
+
+            //更新簽核的狀態 TASK_RESULT=0，結案
+            UPDATE_Z_SCSHR_LEAVE();
         }
 
 
@@ -248,6 +251,72 @@ namespace TKSG
             }
            
         }
+
+        public void UPDATE_Z_SCSHR_LEAVE()
+        {
+            try
+            {
+                connectionString = connectionStringTKGAFFAIRS;
+                sqlConn = new SqlConnection(connectionString);
+
+                sqlConn.Close();
+                sqlConn.Open();
+                tran = sqlConn.BeginTransaction();
+
+                sbSql.Clear();
+
+                sbSql.AppendFormat(@" 
+                                            UPDATE [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
+                                            SET [Z_SCSHR_LEAVE].[TASK_RESULT]=TEMP.TASK_RESULT
+                                            FROM 
+                                            (
+                                            SELECT 
+                                            ORI_CSHR_LEAVE.[DOC_NBR] AS DOC_NBR
+                                            ,ORI_CSHR_LEAVE.[TASK_STATUS] AS TASK_STATUS
+                                            ,ORI_CSHR_LEAVE.[TASK_RESULT] AS TASK_RESULT
+                                            ,TO_Z_SCSHR_LEAVE.[DOC_NBR] NEWDOC_NBR
+                                            ,TO_Z_SCSHR_LEAVE.[TASK_STATUS]  NEWTASK_STATUS
+                                            ,TO_Z_SCSHR_LEAVE.[TASK_RESULT]  NEWTASK_RESULT
+                                            FROM [192.168.1.223].[UOF].[dbo].[Z_SCSHR_LEAVE] AS ORI_CSHR_LEAVE ,[TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE] AS  TO_Z_SCSHR_LEAVE
+                                            WHERE ORI_CSHR_LEAVE.[DOC_NBR]=TO_Z_SCSHR_LEAVE.[DOC_NBR] COLLATE Chinese_Taiwan_Stroke_BIN
+                                            AND ISNULL(TO_Z_SCSHR_LEAVE.[TASK_RESULT],'')=''
+                                            AND ORI_CSHR_LEAVE.[TASK_RESULT]='0'
+                                            ) AS TEMP 
+                                            WHERE TEMP.DOC_NBR=[Z_SCSHR_LEAVE].DOC_NBR COLLATE Chinese_Taiwan_Stroke_BIN
+                                            ");
+
+                sbSql.AppendFormat(@"   ");
+
+                cmd.Connection = sqlConn;
+                cmd.CommandTimeout = 60;
+                cmd.CommandText = sbSql.ToString();
+                cmd.Transaction = tran;
+                result = cmd.ExecuteNonQuery();
+
+                if (result == 0)
+                {
+                    tran.Rollback();    //交易取消
+                }
+                else
+                {
+                    tran.Commit();      //執行交易  
+
+                    //MessageBox.Show("完成");
+                }
+            }
+            catch
+            {
+                PREPARE_MAIL();
+            }
+
+            finally
+            {
+                sqlConn.Close();
+            }
+
+        }
+
+        
 
         public void SEARCHHREngFrm001B(string CARDNO)
         {
