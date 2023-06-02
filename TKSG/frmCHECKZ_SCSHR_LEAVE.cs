@@ -1246,7 +1246,7 @@ namespace TKSG
         public void ADD_LOG_TB_EIP_DUTY_TEMP(string CARD_NO,string TYPE)
         {
             try
-            {
+            { 
 
                 connectionString = connectionStringTKGAFFAIRS;
                 sqlConn = new SqlConnection(connectionString);
