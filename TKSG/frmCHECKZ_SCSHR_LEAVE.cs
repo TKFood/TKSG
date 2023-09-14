@@ -24,8 +24,11 @@ namespace TKSG
     public partial class frmCHECKZ_SCSHR_LEAVE : Form
     {
 
-        String connectionStringTKSG = "server=192.168.1.105;database=TKSG;uid=sa;pwd=dsc";
-        String connectionStringTKGAFFAIRS = "server=192.168.1.105;database=TKGAFFAIRS;uid=sa;pwd=dsc";
+        //String connectionStringTKSG = "server=192.168.1.105;database=TKSG;uid=sa;pwd=dsc";
+        //String connectionStringTKGAFFAIRS = "server=192.168.1.105;database=TKGAFFAIRS;uid=sa;pwd=dsc";
+
+        String connectionStringTKSG = "server=192.168.1.105;database=TKSG;uid=tkdb;pwd=tkfood";
+        String connectionStringTKGAFFAIRS = "server=192.168.1.105;database=TKGAFFAIRS;uid=tkdb;pwd=tkfood";
         String connectionStringUOF = "server=192.168.1.223;database=UOF;uid=TKUOF;pwd=TKUOF123456";
 
         string DB = "UOF";
