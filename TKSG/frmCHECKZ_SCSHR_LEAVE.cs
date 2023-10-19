@@ -751,7 +751,7 @@ namespace TKSG
                                     ADDTB_EIP_DUTY_TEMP(ID, "Off", IP);
 
                                     STATUS1 = "Y";
-                                    MessageBox.Show("白名單人員:" + textBox1.Text.Trim()+" "+ NAME);
+                                    MessageBox.Show("確認 白名單 人員，可以進出 :" + textBox1.Text.Trim()+" "+ NAME);
 
                                     textBox1.Text = null;
                                     //MessageBox.Show(textBox1.Text);
@@ -773,7 +773,7 @@ namespace TKSG
 
                 if (STATUS1.Equals("N"))
                 {
-                    MessageBox.Show("查無資料");
+                    MessageBox.Show("查無申請單，不可進出");
                     textBox1.Text = null;
                 }
             }
@@ -827,7 +827,7 @@ namespace TKSG
                                     ADDTB_EIP_DUTY_TEMP(ID, "Work", IP);
 
                                     STATUS2 = "Y";
-                                    MessageBox.Show("白名單人員:" + textBox2.Text.Trim() + " " + NAME);
+                                    MessageBox.Show("確認 白名單 人員，可以進出:" + textBox2.Text.Trim() + " " + NAME);
                                     textBox2.Text = null;
                                 }
                             }
@@ -847,7 +847,7 @@ namespace TKSG
 
                 if (STATUS2.Equals("N"))
                 {
-                    MessageBox.Show("查無資料");
+                    MessageBox.Show("查無申請單，不可進出");
                     textBox1.Text = null;
                 }
             }
@@ -1101,7 +1101,7 @@ namespace TKSG
 
                     //SEARCHHREngFrm001C(CRADNO);
 
-                    MessageBox.Show("查無資料");
+                    MessageBox.Show("查無申請單，不可進出");
                     textBox3.Text = null;
                 }
                 else
@@ -1212,7 +1212,7 @@ namespace TKSG
 
                     //SEARCHHREngFrm001C(CARDNO);
 
-                    MessageBox.Show("查無資料");
+                    MessageBox.Show("查無申請單，不可進出");
                     textBox4.Text = null;
                 }
                 else
