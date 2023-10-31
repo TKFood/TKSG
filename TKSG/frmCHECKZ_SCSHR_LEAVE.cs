@@ -581,8 +581,8 @@ namespace TKSG
                         }
                         else
                         {
-
-                            MessageBox.Show("主管未核準，不允許離廠");
+                            MessageBox.Show("主管未核準申請單，不允許離廠");
+                            CHECKWHITELIST("離開公司");
                         }
                        
 
