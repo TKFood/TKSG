@@ -532,8 +532,10 @@ namespace TKSG
                                     ,[SCSHRMSG]
                                     FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
                                     WHERE [LEACODE] IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND [TASK_RESULT]='0'
                                     AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
                                     AND [CRADNO]='{1}'
+                              
                                      ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
 
                 adapter = new SqlDataAdapter(@"" + sbSql, sqlConn);
@@ -642,6 +644,7 @@ namespace TKSG
                                     ,[SCSHRMSG]
                                     FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
                                     WHERE [LEACODE] IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND [TASK_RESULT]='0'
                                     AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
                                     AND [CRADNO]='{1}'
                                      ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
@@ -1078,6 +1081,7 @@ namespace TKSG
                                     ,[SCSHRMSG]
                                     FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
                                     WHERE [LEACODE] NOT IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND [TASK_RESULT]='0'
                                     AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
                                     AND [CRADNO]='{1}'
                                      ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
@@ -1190,6 +1194,7 @@ namespace TKSG
                                     ,[SCSHRMSG]
                                     FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
                                     WHERE [LEACODE] NOT IN (SELECT  [LEACODE]   FROM [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVELEACODE])
+                                    AND [TASK_RESULT]='0'
                                     AND CONVERT(NVARCHAR,[STARTTIME],112)='{0}'
                                     AND [CRADNO]='{1}'
                                      ", DateTime.Now.ToString("yyyyMMdd"), CARDNO);
