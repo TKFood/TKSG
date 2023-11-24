@@ -116,38 +116,86 @@ namespace TKSG
 
                     sqlConn.Close();
                     sqlConn.Open();
-                    tran = sqlConn.BeginTransaction();
-
-                    sbSql.Clear();
-                 
-                    foreach(DataRow row in Z_SCSHR_LEAV.Tables[0].Rows)
+                    using (SqlConnection sqlConn = new SqlConnection(connectionStringTKGAFFAIRS))
                     {
-                        sbSql.AppendFormat(@" 
-                                            INSERT INTO [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
-                                            ([DOC_NBR],[TASK_STATUS],[TASK_RESULT],[GROUP_CODE],[APPLICANT],[APPLICANTGUID],[APPLICANTCOMP],[APPLICANTDEPT],[APPLICANTDATE],[LEAEMP],[LEAAGENT],[LEACODE],[LEACODENAME],[SP_DATE],[SP_NAME],[STARTTIME],[ENDTIME],[LEAHOURS],[LEADAYS],[REMARK],[CANCEL_DOC_NBR],[CANCEL_STATUS],[SCSHR],[SCSHRMSG],[CRADNO],[NAME])
-                                            VALUES
-                                            ('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}','{8}','{9}','{10}','{11}','{12}','{13}','{14}','{15}','{16}','{17}','{18}','{19}','{20}','{21}','{22}','{23}','{24}','{25}')
+                        sqlConn.Open();
+                        using (SqlTransaction tran = sqlConn.BeginTransaction())
+                        {
+                            try
+                            {
+                                foreach (DataRow row in Z_SCSHR_LEAV.Tables[0].Rows)
+                                {
+                                    using (SqlCommand cmd = new SqlCommand())
+                                    {
+                                        cmd.Connection = sqlConn;
+                                        cmd.Transaction = tran;
+                                        cmd.CommandTimeout = 60;
 
-                                            ", row["DOC_NBR"].ToString(), row["TASK_STATUS"].ToString(), row["TASK_RESULT"].ToString(), row["GROUP_CODE"].ToString(), row["APPLICANT"].ToString(), row["APPLICANTGUID"].ToString(), row["APPLICANTCOMP"].ToString(), row["APPLICANTDEPT"].ToString(), row["APPLICANTDATE"].ToString(), row["LEAEMP"].ToString(), row["LEAAGENT"].ToString(), row["LEACODE"].ToString(), row["LEACODENAME"].ToString(), row["SP_DATE"].ToString(), row["SP_NAME"].ToString(), row["STARTTIME"].ToString(), row["ENDTIME"].ToString(), row["LEAHOURS"].ToString(), row["LEADAYS"].ToString(), row["REMARK"].ToString(), row["CANCEL_DOC_NBR"].ToString(), row["CANCEL_STATUS"].ToString(), row["SCSHR"].ToString(), row["SCSHRMSG"].ToString(), row["CardNo"].ToString(), row["Name"].ToString());
-                    }
+                                        cmd.CommandText = @"
+                                                            INSERT INTO [TKGAFFAIRS].[dbo].[Z_SCSHR_LEAVE]
+                                                            ([DOC_NBR],[TASK_STATUS],[TASK_RESULT],[GROUP_CODE],[APPLICANT],[APPLICANTGUID],[APPLICANTCOMP],[APPLICANTDEPT],[APPLICANTDATE],[LEAEMP],[LEAAGENT],[LEACODE],[LEACODENAME],[SP_DATE],[SP_NAME],[STARTTIME],[ENDTIME],[LEAHOURS],[LEADAYS],[REMARK],[CANCEL_DOC_NBR],[CANCEL_STATUS],[SCSHR],[SCSHRMSG],[CRADNO],[NAME])
+                                                            VALUES
+                                                            (@DOC_NBR, @TASK_STATUS, @TASK_RESULT, @GROUP_CODE, @APPLICANT, @APPLICANTGUID, @APPLICANTCOMP, @APPLICANTDEPT, @APPLICANTDATE, @LEAEMP, @LEAAGENT, @LEACODE, @LEACODENAME, @SP_DATE, @SP_NAME, @STARTTIME, @ENDTIME, @LEAHOURS, @LEADAYS, @REMARK, @CANCEL_DOC_NBR, @CANCEL_STATUS, @SCSHR, @SCSHRMSG, @CardNo, @Name)
+                                                        ";
 
-                    sbSql.AppendFormat(@"   ");
+                                        // 添加參數並設定值
+                                        cmd.Parameters.Add(new SqlParameter("@DOC_NBR", SqlDbType.VarChar) { Value = row["DOC_NBR"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@TASK_STATUS", SqlDbType.VarChar) { Value = row["TASK_STATUS"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@TASK_RESULT", SqlDbType.VarChar) { Value = row["TASK_RESULT"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@GROUP_CODE", SqlDbType.VarChar) { Value = row["GROUP_CODE"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@APPLICANT", SqlDbType.VarChar) { Value = row["APPLICANT"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@APPLICANTGUID", SqlDbType.VarChar) { Value = row["APPLICANTGUID"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@APPLICANTCOMP", SqlDbType.VarChar) { Value = row["APPLICANTCOMP"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@APPLICANTDEPT", SqlDbType.VarChar) { Value = row["APPLICANTDEPT"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@APPLICANTDATE", SqlDbType.VarChar) { Value = row["APPLICANTDATE"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@LEAEMP", SqlDbType.VarChar) { Value = row["LEAEMP"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@LEAAGENT", SqlDbType.VarChar) { Value = row["LEAAGENT"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@LEACODE", SqlDbType.VarChar) { Value = row["LEACODE"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@LEACODENAME", SqlDbType.VarChar) { Value = row["LEACODENAME"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@SP_DATE", SqlDbType.VarChar) { Value = row["SP_DATE"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@SP_NAME", SqlDbType.VarChar) { Value = row["SP_NAME"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@STARTTIME", SqlDbType.VarChar) { Value = row["STARTTIME"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@ENDTIME", SqlDbType.VarChar) { Value = row["ENDTIME"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@LEAHOURS", SqlDbType.VarChar) { Value = row["LEAHOURS"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@LEADAYS", SqlDbType.VarChar) { Value = row["LEADAYS"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@REMARK", SqlDbType.VarChar) { Value = row["REMARK"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@CANCEL_DOC_NBR", SqlDbType.VarChar) { Value = row["CANCEL_DOC_NBR"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@CANCEL_STATUS", SqlDbType.VarChar) { Value = row["CANCEL_STATUS"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@SCSHR", SqlDbType.VarChar) { Value = row["SCSHR"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@SCSHRMSG", SqlDbType.VarChar) { Value = row["SCSHRMSG"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@CardNo", SqlDbType.VarChar) { Value = row["CardNo"].ToString() });
+                                        cmd.Parameters.Add(new SqlParameter("@Name", SqlDbType.VarChar) { Value = row["Name"].ToString() });
 
-                    cmd.Connection = sqlConn;
-                    cmd.CommandTimeout = 60;
-                    cmd.CommandText = sbSql.ToString();
-                    cmd.Transaction = tran;
-                    result = cmd.ExecuteNonQuery();
+                                       
+                                        // 繼續添加其他參數...
 
-                    if (result == 0)
-                    {
-                        tran.Rollback();    //交易取消
-                    }
-                    else
-                    {
-                        tran.Commit();      //執行交易  
+                                        // 繼續添加其他參數...
 
-                        //MessageBox.Show("完成");
+                                        // 執行SQL命令
+                                        int result = cmd.ExecuteNonQuery();
+
+                                        if (result == 0)
+                                        {
+                                            tran.Rollback(); // 交易取消
+                                        }
+                                        else
+                                        {
+                                            // 如果有需要，可以在這裡添加其他處理邏輯
+
+                                            tran.Commit(); // 執行交易
+                                        }
+                                    }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                // 處理例外狀況
+                                tran.Rollback();
+                                MessageBox.Show($"發生錯誤: {ex.Message}");
+                                //Console.WriteLine($"發生錯誤: {ex.Message}");
+                                // 可以添加日誌或其他錯誤處理邏輯
+                            }
+                        }
                     }
                 }
                 catch
